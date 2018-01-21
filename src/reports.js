@@ -28,7 +28,7 @@ export const newWeek = async (data) => {
   const { week, payout } = data
   const start = dateformat(new Date(2017, 0, (week-1) * 7), 'mmm d')
   const end = dateformat(new Date(2017, 0, (week) * 7 - 1), 'mmm d')
-  
+  const users = await getUsers()
   const posts = await getContestants({ week: week })
   let contestants = posts.map(post => `[${post.author}](steemit.com/nowplaying/@${post.author}/${post.permlink})`)
     
@@ -50,6 +50,11 @@ export const newWeek = async (data) => {
 | Rewards from this post will be split among all contestants
 | -
 | Contestants are anyone who follows all of the above rules
+
+## <center>Leaderboards</center>
+Rank | User | Posts | Votes
+-|-|-|-
+${users.sort((a, b) => b.posts - a.posts || b.votes - a.votes || a.username > b.username).reduce((str, user, index) => `${str}${index + 1} | ${user.username} | ${user.posts} | ${user.votes}\n`, '')}
 
 # <center>Get your entries in by Sun. ${end}!</center></center>`
   ncp.copy(body, () => console.log('Copied to clipboard'))

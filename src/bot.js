@@ -3,7 +3,7 @@ require("babel-polyfill");
 
 import steem from "steem";
 import { addPost, scrape, scrapeVotes } from './database'
-import { report, recap } from './reports'
+import { recap, newWeek } from './reports'
 import { setInterval } from "timers";
 
 const week = process.argv.includes('--week')
@@ -20,6 +20,11 @@ if (process.argv.includes('--recap')) {
     payout: process.argv[process.argv.indexOf('--recap') + 1]
   })
 }
+if (process.argv.includes('--report')) {
+  newWeek({
+    week: week,
+  })
+}
 if (process.argv.includes('--scrape')) {
   scrape({
     week: week,
@@ -34,4 +39,4 @@ if (process.argv.includes('--scrape')) {
     })
   }, 60*1000*5)
 }
-console.log('hello')
+console.log('...')
