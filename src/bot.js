@@ -1,3 +1,6 @@
+require("babel-core/register");
+require("babel-polyfill");
+
 import steem from "steem";
 import { addPost, scrape, scrapeVotes } from './database'
 import { report, recap } from './reports'
