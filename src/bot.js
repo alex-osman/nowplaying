@@ -17,7 +17,7 @@ if (process.argv.includes('--scrape-votes')) {
 if (process.argv.includes('--recap')) {
   recap({
     week: week,
-    payout: process.argv[process.argv.indexOf('--recap') + 1]
+    payout: process.argv[process.argv.indexOf('--payout') + 1]
   })
 }
 if (process.argv.includes('--report')) {

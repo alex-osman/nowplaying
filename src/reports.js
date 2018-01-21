@@ -42,7 +42,7 @@ export const newWeek = async (data) => {
 | Week ${week} spans from Sun. ${start} to Sat. ${end}
 | -
 | #nowplaying must be the first tag
-| \`Now Playing Week ${week}\` must be in the title of your post
+| __Now Playing Week ${week}__ must be in the title of your post
 | Add a link to your post in the comments of this post
 | Upvote this post and at least one other #nowplaying entry
 
@@ -52,9 +52,9 @@ export const newWeek = async (data) => {
 | Contestants are anyone who follows all of the above rules
 
 ## <center>Leaderboards</center>
-Rank | User | Posts | Votes
+Rank | User | Weeks | Votes
 -|-|-|-
-${users.sort((a, b) => b.posts - a.posts || b.votes - a.votes || a.username > b.username).reduce((str, user, index) => `${str}${index + 1} | ${user.username} | ${user.posts} | ${user.votes}\n`, '')}
+${users.sort((a, b) => b.posts - a.posts || b.votes - a.votes || a.username > b.username).reduce((str, user, index) => `${str}${index + 1} | ${user.username} | ${user.posts > week ? week : user.posts} | ${user.votes}\n`, '')}
 
 # <center>Get your entries in by Sun. ${end}!</center></center>`
   ncp.copy(body, () => console.log('Copied to clipboard'))
@@ -75,7 +75,7 @@ export const recap = async (data) => {
 ![](https://steemitimages.com/DQmeUqpd5RJbEUEkdTHqYBZYmcA137fUq4FX5nTN6yBuscW/image.png)
 
 ## <center>Week ${week} Contestants</center>
-We had a total payout of about ${payout} STEEM, which has been powered up to all contestants. That's about ${parseInt(payout / contestants.length * 100) / 100} SP per person!
+We had a total payout of about ${payout} STEEM, which has been powered up to all ${contestants.length} contestants. That's about ${parseInt(payout / contestants.length * 100) / 100} SP per person!
 <center>${contestants.reduce((str, contestant, index) => `${str}${contestant}${index === contestants.length-1 ? '!' : ', '}`, '')}
 
 ## <center>[Spotify Playlist](https://open.spotify.com/user/1240132288/playlist/6kgL9m3OVcSn2gN4XnwHAk)</center>
