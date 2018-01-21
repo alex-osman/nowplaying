@@ -10,15 +10,20 @@ export const getPosts = () => new Promise((resolve, reject) => {
     }, (err, result) => {
         if (err) reject(err)
         else {
-            // console.log(result.length)
-            // console.log(result.map(x => x.author))
             resolve(
                 result.map(post => ({
                     author: post.author,
                     permlink: post.permlink,
-                    created: post.created
+                    created: post.created,
+                    votes: post.active_votes.length
                 }))
             )
         }
     })
+})
+
+export const getPost = (data) => new Promise((resolve, reject) => {
+    steem.api.getContent(data.author, data.permlink, (err, result) => {
+        resolve(result)
+    });
 })

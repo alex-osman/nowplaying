@@ -1,5 +1,6 @@
 import { getPosts } from './api'
 import { weekFilter } from './filters'
+import { getUserPosts, getUsers } from './database'
 import dateformat from 'dateformat'
 import ncp from 'copy-paste'
 
@@ -32,7 +33,7 @@ export const newWeek = async (data) => {
   let contestants = posts.map(post => `[${post.author}](steemit.com/nowplaying/@${post.author}/${post.permlink})`)
     
   let body = `# <center>Steemit Now Playing: Week ${week} (${start} - ${end})</center>
-<center>\`Now Playing\` is a way to share what you are listening to this week with others</center>
+<center>__Now Playing__ is a way to share what you are listening to this week with others</center>
 
 ![](https://steemitimages.com/DQmeUqpd5RJbEUEkdTHqYBZYmcA137fUq4FX5nTN6yBuscW/image.png)
 
@@ -59,21 +60,27 @@ export const recap = async (data) => {
   const { week, payout } = data
   const start = dateformat(new Date(2017, 0, (week-1) * 7), 'mmm d')
   const end = dateformat(new Date(2017, 0, (week) * 7 - 1), 'mmm d')
-  
+  const users = await getUsers()
   const posts = await getContestants({ week: week })
   let contestants = posts.map(post => `[${post.author}](steemit.com/nowplaying/@${post.author}/${post.permlink})`)
-  let body = `# <center>Steemit Now Playing: Week ${week} (${start} - ${end})</center>
-<center>\`Now Playing\` is a way to share what you are listening to this week with others</center>
+
+  let body = `# <center>Steemit Now Playing: Week ${week} (${start} - ${end}) Recap</center>
+<center>__Now Playing__ is a way to share what you are listening to this week with others</center>
 
 ![](https://steemitimages.com/DQmeUqpd5RJbEUEkdTHqYBZYmcA137fUq4FX5nTN6yBuscW/image.png)
 
-## <center>Week ${week-1} Contestants</center>
-<center>${contestants.reduce((str, contestant, index) => `${str}${contestant}${index === contestants.length-1 ? '!' : ', '}`, '')}
+## <center>Week ${week} Contestants</center>
 We had a total payout of about ${payout} STEEM, which has been powered up to all contestants. That's about ${parseInt(payout / contestants.length * 100) / 100} SP per person!
+<center>${contestants.reduce((str, contestant, index) => `${str}${contestant}${index === contestants.length-1 ? '!' : ', '}`, '')}
 
-# Be sure to enter week ${week}!</center>`
+## <center>[Spotify Playlist](https://open.spotify.com/user/1240132288/playlist/6kgL9m3OVcSn2gN4XnwHAk)</center>
+<center>Great idea @popsoz!</center>
+![](https://steemitimages.com/DQmZFNCeBrjyL4cJanf6XSVg1CWMF9jjMaVaBQANqKhH4WQ/image.png)
+
+## Leaderboards
+User | Posts | Votes
+-|-|-
+${users.sort((a, b) => b.posts - a.posts || b.votes - a.votes || a.username > b.username).reduce((str, user) => `${str}${user.username} | ${user.posts} | ${user.votes}\n`, '')}`
   ncp.copy(body, () => console.log('Copied to clipboard'))
   return body
 }
-
-newWeek({ week: 3, payout: 4 })

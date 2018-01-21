@@ -1,15 +1,20 @@
 import steem from "steem";
-import { addPost, scrape } from './database'
-import { report, payout } from './reports'
+import { addPost, scrape, scrapeVotes } from './database'
+import { report, recap } from './reports'
 import { setInterval } from "timers";
 
 const week = process.argv.includes('--week')
   ? process.argv[process.argv.findIndex(arg => arg === '--week') + 1]
   : undefined
 
-if (process.argv.includes('--report')) {
-  payout({
-    week: week
+if (process.argv.includes('--scrape-votes')) {
+  scrapeVotes()
+  setInterval(() => scrapeVotes(), 60*60*1000)
+}
+if (process.argv.includes('--recap')) {
+  recap({
+    week: week,
+    payout: process.argv[process.argv.indexOf('--recap') + 1]
   })
 }
 if (process.argv.includes('--scrape')) {
