@@ -82,10 +82,10 @@ We had a total payout of about ${payout} STEEM, which has been powered up to all
 <center>Great idea @popsoz!</center>
 ![](https://steemitimages.com/DQmZFNCeBrjyL4cJanf6XSVg1CWMF9jjMaVaBQANqKhH4WQ/image.png)
 
-## Leaderboards
-User | Posts | Votes
--|-|-
-${users.sort((a, b) => b.posts - a.posts || b.votes - a.votes || a.username > b.username).reduce((str, user) => `${str}${user.username} | ${user.posts} | ${user.votes}\n`, '')}`
+## <center>Leaderboards</center>
+Rank | User | Weeks | Votes
+-|-|-|-
+${users.sort((a, b) => b.posts - a.posts || b.votes - a.votes || a.username > b.username).reduce((str, user, index) => `${str}${index + 1} | ${user.username} | ${user.posts > week ? week : user.posts} | ${user.votes}\n`, '')}`
   ncp.copy(body, () => console.log('Copied to clipboard'))
   return body
 }

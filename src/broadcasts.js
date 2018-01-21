@@ -25,20 +25,22 @@ export const comment = async (post) => {
     const users = await getUsers()
     return new Promise((resolve, reject) => {
         const user = users.find(x => x.username === post.author)
+        console.log(user)
         const rank = users.sort((a, b) => b.posts - a.posts).indexOf(user)
         const commentBody = `Thanks for entering this week's #nowplaying!<br><hr>
 User | Rank | Posts | Votes
 -|-|-|-
 ${user.username} | ${rank} | ${user.posts} | ${user.votes}`
-    steem.broadcast.comment(wif, post.author, post.permlink, username, `nowplaying-${new Date().getTime()}`, '', `${commentBody}`, { tags: ['nowplaying', 'music'], app: 'nowplaying/week3' }, (err, result) => {
-        // console.log(err, result)
-        if (err) {
-            console.log(err)
-        } else {
-            console.log('Commented on ', post.author)
-        }
-        resolve(result)
-    })
+    console.log(commentBody)
+    // steem.broadcast.comment(wif, post.author, post.permlink, username, `nowplaying-${new Date().getTime()}`, '', `${commentBody}`, { tags: ['nowplaying', 'music'], app: 'nowplaying/week3' }, (err, result) => {
+    //     // console.log(err, result)
+    //     if (err) {
+    //         console.log(err)
+    //     } else {
+    //         console.log('Commented on ', post.author)
+    //     }
+    //     resolve(result)
+    // })
 })
 }
 // comment({
