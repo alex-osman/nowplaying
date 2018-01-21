@@ -1,0 +1,1 @@
+export const weekFilter = number => (post) => !number || post.permlink.includes(`week-${number}`) || post.permlink.includes(`week${number}`)
