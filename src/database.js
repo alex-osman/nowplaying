@@ -23,24 +23,15 @@ export const addPost = post => {
         // Insert into database
         connection.query('INSERT INTO posts SET ?', [post], (err, response) => {
             if (err) {
-                console.log(post.author, 'post already in db')
+                // console.log(post.author, 'post already in db')
                 resolve({error: true, post: post})
             } else {
                 // Insert author
                 connection.query('INSERT INTO users set username=?', [post.author], (err, response) => {
                     if (err) {
-                        console.log(post.author, 'author already in db')
-                        resolve({error: true, post: post})
+                        // console.log(post.author, 'author already in db')
                     }
-                    // Add experience to author
-                    connection.query('UPDATE users SET xp = xp + 5 WHERE username=?', [post.author], (err, response) => {
-                        // Yay!
-                        if (err) {
-                            resolve({error: true, post: post})
-                        } else {
-                            resolve({error: false, post: post})
-                        }
-                    })
+                    resolve({error: false, post: post})
                 })
             }
         })

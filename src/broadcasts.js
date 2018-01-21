@@ -1,4 +1,5 @@
 import steem from "steem";
+import { getUsers } from './database'
 
 steem.api.setOptions({ url: 'wss://steemd-int.steemit.com' });
 const username = process.env.STEEM_USERNAME
@@ -20,9 +21,16 @@ export const vote = (post) => new Promise((resolve, reject) => {
     })
 })
 
-export const comment = (post) => new Promise((resolve, reject) => {
-    console.log(wif, post, username)
-    steem.broadcast.comment(wif, post.author, post.permlink, username, `nowplaying-${new Date().getTime()}`, '', `Thanks for entering this week's #nowplaying!`, { tags: ['nowplaying', 'music'], app: 'nowplaying/week3' }, (err, result) => {
+export const comment = async (post) => {
+    const users = await getUsers()
+    return new Promise((resolve, reject) => {
+        const user = users.find(x => x.username === post.author)
+        const rank = users.sort((a, b) => b.posts - a.posts).indexOf(user)
+        const commentBody = `Thanks for entering this week's #nowplaying!<br><hr>
+User | Rank | Posts | Votes
+-|-|-|-
+${user.username} | ${rank} | ${user.posts} | ${user.votes}`
+    steem.broadcast.comment(wif, post.author, post.permlink, username, `nowplaying-${new Date().getTime()}`, '', `${commentBody}`, { tags: ['nowplaying', 'music'], app: 'nowplaying/week3' }, (err, result) => {
         // console.log(err, result)
         if (err) {
             console.log(err)
@@ -32,7 +40,7 @@ export const comment = (post) => new Promise((resolve, reject) => {
         resolve(result)
     })
 })
-
+}
 // comment({
 //     author: 'spiritualmax',
 //     permlink: 'screw-malicious-flagging-1-flag-vs-130-votes'
