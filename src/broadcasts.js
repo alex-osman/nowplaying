@@ -31,19 +31,14 @@ export const comment = async (post) => {
 User | Rank | Posts | Votes
 -|-|-|-
 ${user.username} | ${rank} | ${user.posts} | ${user.votes}`
-    console.log(commentBody)
-    // steem.broadcast.comment(wif, post.author, post.permlink, username, `nowplaying-${new Date().getTime()}`, '', `${commentBody}`, { tags: ['nowplaying', 'music'], app: 'nowplaying/week3' }, (err, result) => {
-    //     // console.log(err, result)
-    //     if (err) {
-    //         console.log(err)
-    //     } else {
-    //         console.log('Commented on ', post.author)
-    //     }
-    //     resolve(result)
-    // })
-})
+        // console.log(commentBody)
+        steem.broadcast.comment(wif, post.author, post.permlink, username, `nowplaying-${new Date().getTime()}`, '', `${commentBody}`, { tags: ['nowplaying', 'music'], app: 'nowplaying/week3' }, (err, result) => {
+            if (err) {
+                console.log(err)
+            } else {
+                console.log('Commented on ', post.author)
+            }
+            resolve(result)
+        })
+    })
 }
-// comment({
-//     author: 'spiritualmax',
-//     permlink: 'screw-malicious-flagging-1-flag-vs-130-votes'
-// }).then(x => console.log('~~~got', x))

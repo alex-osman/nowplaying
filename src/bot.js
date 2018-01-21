@@ -37,6 +37,6 @@ if (process.argv.includes('--scrape')) {
       vote: false,
       comment: false,
     })
-  }, 60*1000*5)
+  }, 60*1000)
 }
 console.log('...')
