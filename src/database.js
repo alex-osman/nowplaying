@@ -98,10 +98,13 @@ const setUsers = (data) => data.map(d => ({
 }, USERS)
 
 export const insertVote = (post) => new Promise((resolve, reject) => {
-    connection.query('UPDATE posts SET votes=? WHERE author=? AND permlink=?', [post.votes, post.author, post.permlink], (err, result) => {
+    connection.query('UPDATE posts SET votes=?, body=? WHERE author=? AND permlink=?', [post.votes, post.body, post.author, post.permlink], (err, result) => {
         if (err)
             throw err
-        console.log('Updated vote')
+
+        if (result.changedRows) {
+            console.log('updated', post.author)
+        }
     })
 })
 
@@ -114,8 +117,8 @@ export const scrapeVotes = () => getDBPosts()
     .then(posts => posts.map(post => ({
         author: post.author,
         permlink: post.permlink,
-        votes: post.active_votes.length
+        votes: post.active_votes.length,
+        body: post.body
     })))
     .then(x => x.map(insertVote))
 
-// scrapeVotes()

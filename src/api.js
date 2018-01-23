@@ -4,6 +4,7 @@ steem.api.setOptions({ url: 'wss://steemd-int.steemit.com' });
 
 
 export const getPosts = () => new Promise((resolve, reject) => {
+    steem.api.setOptions({ url: 'wss://steemd-int.steemit.com' });
     steem.api.getDiscussionsByCreated({
         "tag": "nowplaying",
         "limit": 100
@@ -23,6 +24,7 @@ export const getPosts = () => new Promise((resolve, reject) => {
 })
 
 export const getPost = (data) => new Promise((resolve, reject) => {
+    steem.api.setOptions({ url: 'wss://steemd-int.steemit.com' });
     steem.api.getContent(data.author, data.permlink, (err, result) => {
         resolve(result)
     });

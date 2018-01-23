@@ -54,7 +54,7 @@ export const newWeek = async (data) => {
 ## <center>Leaderboards</center>
 Rank | User | Weeks | Votes
 -|-|-|-
-${users.sort((a, b) => b.posts - a.posts || b.votes - a.votes || a.username > b.username).reduce((str, user, index) => `${str}${index + 1} | ${user.username} | ${user.posts > week ? week : user.posts} | ${user.votes}\n`, '')}
+${users.sort((a, b) => b.posts - a.posts || b.votes - a.votes || a.username > b.username).reduce((str, user, index) => `${str}${index + 1} | @${user.username} | ${user.posts > week ? week : user.posts} | ${user.votes}\n`, '')}
 
 # <center>Get your entries in by Sun. ${end}!</center></center>`
   ncp.copy(body, () => console.log('Copied to clipboard'))
@@ -85,7 +85,7 @@ We had a total payout of about ${payout} STEEM, which has been powered up to all
 ## <center>Leaderboards</center>
 Rank | User | Weeks | Votes
 -|-|-|-
-${users.sort((a, b) => b.posts - a.posts || b.votes - a.votes || a.username > b.username).reduce((str, user, index) => `${str}${index + 1} | ${user.username} | ${user.posts > week ? week : user.posts} | ${user.votes}\n`, '')}`
+${users.sort((a, b) => b.posts - a.posts || b.votes - a.votes || a.username > b.username).reduce((str, user, index) => `${str}${index + 1} | @${user.username} | ${user.posts > week ? week : user.posts} | ${user.votes}\n`, '')}`
   ncp.copy(body, () => console.log('Copied to clipboard'))
   return body
 }
