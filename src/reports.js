@@ -1,6 +1,6 @@
 import { getPosts } from './api'
 import { weekFilter } from './filters'
-import { getUserPosts, getUsers } from './database'
+import { getUserPosts, getUsers, leaderboard } from './database'
 import dateformat from 'dateformat'
 import ncp from 'copy-paste'
 
@@ -62,11 +62,16 @@ ${users.sort((a, b) => b.posts - a.posts || b.votes - a.votes || a.username > b.
 }
 
 export const recap = async (data) => {
-  const { week, payout } = data
+  const { week } = data
+  let payout = 4
+  console.log('jfeiowjfie')
+  console.log(week, payout)
   const start = dateformat(new Date(2017, 0, (week-1) * 7), 'mmm d')
   const end = dateformat(new Date(2017, 0, (week) * 7 - 1), 'mmm d')
   const users = await getUsers()
+  console.log('got users')
   const posts = await getContestants({ week: week })
+  console.log('got posts')
   let contestants = posts.map(post => `[${post.author}](steemit.com/nowplaying/@${post.author}/${post.permlink})`)
 
   let body = `# <center>Steemit Now Playing: Week ${week} (${start} - ${end}) Recap</center>

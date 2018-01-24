@@ -3,6 +3,10 @@ import { getPosts, getPost } from './api'
 import { weekFilter } from './filters'
 import { vote, comment } from './broadcasts'
 
+const POSTWEIGHT = 1000
+const VOTESWEIGHT = 100
+const BODYWEIGHT = 1
+
 // Database setup
 const local = {
     host: 'localhost',
@@ -46,7 +50,7 @@ export const scrape = (props) => getPosts()
     console.log('total posts', allPosts.length)
     return allPosts.filter(post => !post.error)
   }).then(validPosts => {
-    console.log('valid posts', validPosts.length)
+    console.log('valid posts', validPosts)
     if (props.vote) {
         validPosts.forEach((data, index) => setTimeout(() => vote(data.post), 5000*index))
     }
@@ -85,11 +89,13 @@ export const getUsers = () => {
 const setUsers = (data) => data.map(d => ({
     username: d.author,
     votes: d.votes,
-    posts: 1
+    posts: 1,
+    body: (d.body ? d.body.length : 1)
 })).reduce((users, post) => {
     const user = users.find(user => user.username === post.username)
     if (user) {
         user.votes += post.votes,
+        user.body += post.body
         user.posts++
     } else {
         users.push(post)
@@ -122,3 +128,15 @@ export const scrapeVotes = () => getDBPosts()
     })))
     .then(x => x.map(insertVote))
 
+const score = (user) => user.posts * POSTWEIGHT + user.votes * VOTESWEIGHT + user.body * BODYWEIGHT
+
+export const leaderboard = (users) => {
+    const week = 4
+    let user = users[0]
+    console.log('wtf man')
+    console.log(users.sort((a, b) => score(a) > score(b)))
+    console.log('yahoo')
+    return users
+    .sort((a, b) => score(b) > score(a))//...   N    |       username    |               weeks                      |     votes
+    .reduce((str, user, index) =>`${str}${index + 1} | @${user.username} | ${user.posts > week ? week : user.posts} | ${user.votes}\n`, '')
+}
