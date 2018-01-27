@@ -6,9 +6,9 @@ import { addPost, scrape, scrapeVotes } from './database'
 import { recap, newWeek } from './reports'
 import { setInterval } from "timers";
 
-const week = 3//process.argv.includes('--week')
-//   ? process.argv[process.argv.findIndex(arg => arg === '--week') + 1]
-//   : undefined
+const week = process.argv.includes('--week')
+  ? process.argv[process.argv.findIndex(arg => arg === '--week') + 1]
+  : undefined
 
 if (process.argv.includes('--scrape-votes')) {
   scrapeVotes()

@@ -11,6 +11,8 @@ export const getPosts = () => new Promise((resolve, reject) => {
     }, (err, result) => {
         if (err) reject(err)
         else {
+            // console.log(result.map(x => x.author))
+            console.log(result.length)
             resolve(
                 result.map(post => ({
                     author: post.author,
