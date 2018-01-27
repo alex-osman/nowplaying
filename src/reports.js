@@ -1,6 +1,14 @@
-import { getPosts } from './api'
-import { weekFilter } from './filters'
-import { getUserPosts, getUsers, leaderboard } from './database'
+import {
+  getPosts
+} from './api'
+import {
+  weekFilter
+} from './filters'
+import {
+  getUserPosts,
+  getUsers,
+  leaderboard
+} from './database'
 import dateformat from 'dateformat'
 import ncp from 'copy-paste'
 
@@ -15,23 +23,28 @@ export const report = (data) => getPosts()
   .then(posts => posts.filter(weekFilter(data.week)))
   .then(posts => posts.sort((a, b) => new Date(a.created) - new Date(b.created)))
   .then(posts => posts.map((post, index) => `${index}) [${post.author}](steemit.com/nowplaying/@${post.author}/${post.permlink})`))
-  // .then(posts => posts.forEach(post => console.log(post)))
+// .then(posts => posts.forEach(post => console.log(post)))
 
 export const payments = (data) => getPosts()
   .then(posts => posts.filter(p => !['walnut1', 'nowplaying-music'].includes(p.author)))
   .then(posts => posts.filter(weekFilter(data.week)))
   .then(posts => posts.filter((p, i) => posts.indexOf(p) === i))
   .then(posts => posts.sort((a, b) => new Date(a.created) - new Date(b.created)))
-  //.then(posts => posts.forEach(post => console.log(post)))
+//.then(posts => posts.forEach(post => console.log(post)))
 
 export const newWeek = async (data) => {
-  const { week, payout } = data
-  const start = dateformat(new Date(2017, 0, (week-1) * 7), 'mmm d')
+  const {
+    week,
+    payout
+  } = data
+  const start = dateformat(new Date(2017, 0, (week - 1) * 7), 'mmm d')
   const end = dateformat(new Date(2017, 0, (week) * 7 - 1), 'mmm d')
   const users = await getUsers()
-  const posts = await getContestants({ week: week })
+  const posts = await getContestants({
+    week: week
+  })
   let contestants = posts.map(post => `[${post.author}](steemit.com/nowplaying/@${post.author}/${post.permlink})`)
-    
+
   let body = `# <center>Steemit Now Playing: Week ${week} (${start} - ${end})</center>
 <center>__Now Playing__ is a way to share what you are listening to this week with others</center>
 
@@ -62,15 +75,19 @@ ${users.sort((a, b) => b.posts - a.posts || b.votes - a.votes || a.username > b.
 }
 
 export const recap = async (data) => {
-  const { week } = data
+  const {
+    week
+  } = data
   let payout = 4
   console.log('jfeiowjfie')
   console.log(week, payout)
-  const start = dateformat(new Date(2017, 0, (week-1) * 7), 'mmm d')
+  const start = dateformat(new Date(2017, 0, (week - 1) * 7), 'mmm d')
   const end = dateformat(new Date(2017, 0, (week) * 7 - 1), 'mmm d')
   const users = await getUsers()
   console.log('got users')
-  const posts = await getContestants({ week: week })
+  const posts = await getContestants({
+    week: week
+  })
   console.log('got posts')
   let contestants = posts.map(post => `[${post.author}](steemit.com/nowplaying/@${post.author}/${post.permlink})`)
 
@@ -91,6 +108,7 @@ We had a total payout of about ${payout} STEEM, which has been powered up to all
 Rank | User | Weeks | Votes
 -|-|-|-
 ${users.sort((a, b) => b.posts - a.posts || b.votes - a.votes || a.username > b.username).reduce((str, user, index) => `${str}${index + 1} | @${user.username} | ${user.posts > week ? week : user.posts} | ${user.votes}\n`, '')}`
+
   ncp.copy(body, () => console.log('Copied to clipboard'))
   return body
 }
