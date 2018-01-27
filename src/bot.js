@@ -1,6 +1,3 @@
-require("babel-core/register");
-require("babel-polyfill");
-
 import steem from "steem";
 import {
   addPost,
@@ -15,9 +12,10 @@ import {
   setInterval
 } from "timers";
 
-const week = process.argv.includes('--week') ?
-  process.argv[process.argv.findIndex(arg => arg === '--week') + 1] :
-  undefined
+const week = 4
+// process.argv.includes('--week') ?
+//   process.argv[process.argv.findIndex(arg => arg === '--week') + 1] :
+//   undefined
 
 if (process.argv.includes('--scrape-votes')) {
   scrapeVotes()
@@ -34,7 +32,7 @@ if (process.argv.includes('--report')) {
     week: week,
   })
 }
-if (process.argv.includes('--scrape')) {
+if (true || process.argv.includes('--scrape')) {
   scrape({
     week: week,
     vote: process.argv.includes('--vote'),

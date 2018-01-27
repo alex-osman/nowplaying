@@ -30,6 +30,7 @@ export const addPost = post => {
         // Insert into database
         connection.query('INSERT INTO posts SET ?', [post], (err, response) => {
             if (err) {
+                console.log(err)
                 // console.log(post.author, 'post already in db')
                 resolve({
                     error: true,
@@ -98,17 +99,20 @@ export const getUsers = () => {
 const setUsers = (data) => data.map(d => ({
     username: d.author,
     votes: d.votes,
-    posts: 1,
+    created: d.created,
+    permlink: d.permlink
 })).reduce((users, post) => {
     const user = users.find(user => user.username === post.username)
     if (user) {
-        user.votes += post.votes,
-        user.posts++
+        user.posts.push(post)
     } else {
-        users.push(post)
+        users.push({
+            username: post.username,
+            posts: [post]
+        })
     }
     return users
-}, USERS)
+}, [])
 
 export const insertVote = (post) => new Promise((resolve, reject) => {
     connection.query('UPDATE posts SET votes=? WHERE author=? AND permlink=?', [post.votes, post.author, post.permlink], (err, result) => {
