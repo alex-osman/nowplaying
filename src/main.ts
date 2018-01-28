@@ -5,7 +5,11 @@ import {
 import {
   reportStartWeek
 } from './reporter';
-import { getUsers } from './data';
+import {
+  getUsers,
+  getPosts,
+  writePosts,
+} from './data';
 
 const mysql = require('promise-mysql');
 
@@ -21,10 +25,13 @@ const local = {
 const main = async () => {
   const con = await mysql.createConnection(local)
   const users = await getUsers(con)
-  const report = reportStartWeek(users.filter(weekFilter(4)))
+  const posts = await getPosts()
+  const write = await writePosts(con, posts)
+  console.log(write)
+  // const report = reportStartWeek(users.filter(weekFilter(4)))
 
-  console.log(report)
-  ncp.copy(report, () => console.log('Copied to clipboard'))
+  // console.log(report)
+  // ncp.copy(report, () => console.log('Copied to clipboard'))
 }
 
 main()
