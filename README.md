@@ -1,95 +1,28 @@
-[![Dev dependencies][dependencies-badge]][dependencies]
-[![Node.js version][nodejs-badge]][nodejs]
-[![NPM version][npm-badge]][npm]
-[![Build Status][travis-badge]][travis-ci]
+![](https://steemitimages.com/DQmeUqpd5RJbEUEkdTHqYBZYmcA137fUq4FX5nTN6yBuscW/image.png)
 
-[![APLv2][license-badge]][LICENSE]
-[![PRs Welcome][prs-badge]][prs]
-[![Donate][donate-badge]][donate]
+## Introduction
+#NowPlaying is a way to share with others what you are listening to this week.  Every week users will share what they are listening to with other music lovers.  It is a great way to discover new music and find other users who share a similar taste in music.  AND you will make some steem while doing it!
 
-[![Watch on GitHub][github-watch-badge]][github-watch]
-[![Star on GitHub][github-star-badge]][github-star]
-[![Tweet][twitter-badge]][twitter]
+Below are two great examples from the last week by @louie-jr and @jrovner.
+![](https://steemitimages.com/DQmSjSaHXDrMeyMQDxysePafY3iwR6gr2en12epWDHoEePQ/image.png)
 
-# node-typescript-boilerplate
+## Rewards
+- Weekly posts will be made to kick off a new week
+- Rewards from that post will be split among all contestants equally
+- Contestants are anyone who follows all of the rules below
+- This account will upvote 100% all posts
 
-Minimalistic boilerplate to jump-start a [Node.js][nodejs] project in [TypeScript][typescript] [2.6][typescript-26].
+_*I hope to soon introduce a bot similar to @photocontests that will gamify the process!_
 
-Provides a basic template, "batteries included":
+## Steemit Now Playing Rules
+- Weeks start on Monday and end on Sunday
+- #nowplaying must be the first tag
+- `Now Playing Week N` must be in the title of your post, where `N` is this week's number
+- Add a link to your post in the comments of the week's post
+- Upvote the week's post and at least one other #nowplaying entry
+- You may post as many #nowplaying posts as you want
 
-+ [TypeScript][typescript] [2.6][typescript-26] to ES6 transpilation,
-+ [TSLint][tslint] 5.x with [Microsoft recommended rules][tslint-microsoft-contrib],
-+ [Jest][jest] unit testing and code coverage,
-+ Type definitions for Node.js v8.x and Jest,
-+ [NPM scripts for common operations](#available-scripts),
-+ a simple example of TypeScript code and unit test,
-+ .editorconfig for consistent file format.
+### What are you listening to!
+Let me and your fellow steemians know what you are listening to in the comments or by making your very own #nowplaying post!  Check out the current week [here](https://steemit.com/nowplaying/@nowplaying-music/now-playing-week-3)!
 
-## Quick start
-
-This project is intended to be used with v8.9 (LTS Carbon) release of [Node.js][nodejs] or newer and [NPM][npm]. Make sure you have those installed. Then just type following commands:
-
-```sh
-git clone https://github.com/jsynowiec/node-typescript-boilerplate
-cd node-typescript-boilerplate
-npm install
-```
-
-or just download and unzip current `master` branch:
-
-```sh
-wget https://github.com/jsynowiec/node-typescript-boilerplate/archive/master.zip -O node-typescript-boilerplate
-unzip node-typescript-boilerplate.zip && rm node-typescript-boilerplate.zip
-```
-
-Now start adding your code in the `src` and unit tests in the `__tests__` directories. Have fun and build amazing things 🚀
-
-### Unit tests in JavaScript
-
-Writing unit tests in TypeScript can sometimes be troublesome and confusing. Especially when mocking dependencies and using spies.
-
-This is **optional**, but if you want to learn how to write JavaScript tests for TypeScript modules, read the [corresponding wiki page][wiki-js-tests].
-
-## Available scripts
-
-+ `clean` - remove coverage data, Jest cache and transpiled files,
-+ `build` - transpile TypeScript to ES6,
-+ `watch` - interactive watch mode to automatically transpile source files, 
-+ `lint` - lint source files and tests,
-+ `test` - run tests,
-+ `test:watch` - interactive watch mode to automatically re-run tests
-
-## Alternative
-
-As an alternative to TypeScript, you can try my [Node.js Flow boilerplate][flow-boilerplate]. It's basically the same but with ES6, async/await, Flow type checking and ESLint.
-
-## License
-Licensed under the APLv2. See the [LICENSE](https://github.com/jsynowiec/node-typescript-boilerplate/blob/master/LICENSE) file for details.
-
-[dependencies-badge]: https://david-dm.org/jsynowiec/node-typescript-boilerplate/dev-status.svg
-[dependencies]: https://david-dm.org/jsynowiec/node-typescript-boilerplate?type=dev
-[nodejs-badge]: https://img.shields.io/badge/node->=%208.9-blue.svg
-[nodejs]: https://nodejs.org/dist/latest-v6.x/docs/api/
-[npm-badge]: https://img.shields.io/badge/npm->=%205.5.1-blue.svg
-[npm]: https://docs.npmjs.com/
-[travis-badge]: https://travis-ci.org/jsynowiec/node-typescript-boilerplate.svg?branch=master
-[travis-ci]: https://travis-ci.org/jsynowiec/node-typescript-boilerplate
-[typescript]: https://www.typescriptlang.org/
-[typescript-26]: https://github.com/Microsoft/TypeScript/wiki/What's-new-in-TypeScript#typescript-26
-[license-badge]: https://img.shields.io/badge/license-APLv2-blue.svg
-[license]: https://github.com/jsynowiec/node-typescript-boilerplate/blob/master/LICENSE
-[prs-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg
-[prs]: http://makeapullrequest.com
-[donate-badge]: https://img.shields.io/badge/$-support-green.svg
-[donate]: http://bit.ly/donate-js
-[github-watch-badge]: https://img.shields.io/github/watchers/jsynowiec/node-typescript-boilerplate.svg?style=social
-[github-watch]: https://github.com/jsynowiec/node-typescript-boilerplate/watchers
-[github-star-badge]: https://img.shields.io/github/stars/jsynowiec/node-typescript-boilerplate.svg?style=social
-[github-star]: https://github.com/jsynowiec/node-typescript-boilerplate/stargazers
-[twitter]: https://twitter.com/intent/tweet?text=Check%20out%20this%20Node.js%20TypeScript%20boilerplate!%20https://github.com/jsynowiec/node-typescript-boilerplate%20%F0%9F%91%8D
-[twitter-badge]: https://img.shields.io/twitter/url/https/jsynowiec/node-typescript-boilerplate.svg?style=social
-[jest]: https://facebook.github.io/jest/
-[tslint]: https://palantir.github.io/tslint/
-[tslint-microsoft-contrib]: https://github.com/Microsoft/tslint-microsoft-contrib
-[flow-boilerplate]: https://github.com/jsynowiec/node-flowtype-boilerplate
-[wiki-js-tests]: https://github.com/jsynowiec/node-typescript-boilerplate/wiki/Unit-tests-in-plain-JavaScript
+Cheers!
