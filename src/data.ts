@@ -51,6 +51,7 @@ export const getPosts = () => new Promise((resolve, reject) => {
  * @param posts array of posts to write to the database
  */
 export const writePosts = async (con, posts: Post[]) => {
+  console.log(posts)
   const insertResponses: { post: Post, result: any }[] = await Promise.all(posts.map(async post => ({ post, result: await con.query('INSERT INTO posts SET ?', [post])})))
   const toUpdate = insertResponses.filter(res => !res.result.changedRows)
   const updateResponses = await Promise.all(toUpdate.map(async postObj => ({ post: postObj.post, result: await con.query('UPDATE posts SET votes=? WHERE author=? AND permlink=?', [postObj.post.votes, postObj.post.author, postObj.post.permlink])})))

@@ -27,15 +27,15 @@ const local = {
 const main = async () => {
   const con = await mysql.createConnection(local)
   const users = await getUsers(con)
-  const posts = await getPosts() as Post[]
-  const write = await writePosts(con, posts)
+  // const posts = await getPosts() as Post[]
+  // const write = await writePosts(con, posts)
   // const comment = await commentPosts(con, posts.filter(commentFilter))
   // const vote = await commentPosts(con, posts.filter(voteFilter))
 
-  // const report = reportStartWeek(users.filter(weekFilter(4)))
+  const report = reportStartWeek(users.filter(weekFilter(4)))
 
-  // console.log(report)
-  // ncp.copy(report, () => console.log('Copied to clipboard'))
+  console.log(report)
+  ncp.copy(report, () => console.log('Copied to clipboard'))
 }
 
 main()

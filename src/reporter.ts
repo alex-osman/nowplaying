@@ -3,9 +3,9 @@ const dateformat = require('dateformat')
 // import { getUsers } from "./database";
 import { User } from './user'
 
-const steem = 8
-const spotifyLink = 'https://google.com'
-const spotifyImg = 'https://images.com'
+const steem = 4.124
+const spotifyLink = 'https://open.spotify.com/user/1240132288/playlist/4tPNWYmR9liqIS1YgMVClv?si=9KJO_Ap2Th-P4Bivv-37cg'
+const spotifyImg = 'https://steemitimages.com/DQmVQbXpqHthPR7n2gfcvM4yaUKoez1HRojDNnDA9YqWTpR/image.png'
 const week = 4
 const startWeek = new Date(2018, 0, (week - 1) * 7)
 const endWeek = new Date(2018, 0, (week) * 7 - 1)
@@ -23,11 +23,11 @@ const endTitle = () => `# ${center(`Now Playing Recap: Week ${week} (${dateforma
 const subtitle = (str: string) => `${str}\n${center(`\`Now Playing\` is a way to share what you're listening to this week with others.`)}`
 const logo = (str: string) => `${str}\n![](https://steemitimages.com/DQmeUqpd5RJbEUEkdTHqYBZYmcA137fUq4FX5nTN6yBuscW/image.png)`
 
-const spotify = (str: string) => `${str}\n## ${center(`[Spotify Playlist](${spotifyLink})`)}\n[![](${spotifyImg})](${spotifyLink})`
+const spotify = (str: string) => `${str}\n## ${center(`[Spotify Playlist](${spotifyLink})`)}\n${center(`[![](${spotifyImg})](${spotifyLink})`)}`
 
-const payout = (str: string) => `${str}\n ${center(`Week ${week} Contestants`)}\nWe had a total payout of about ${steem} STEEM, which will be powered up to all ${users.length} contestants.  That's about ${parseInt(steem / users.length * 100) / 100} SP per person!`
+const payout = (str: string) => `${str}\n ${center(`Week ${week} Contestants`)}\n${center(`We had a total payout of about ${steem} STEEM, which will be powered up to all ${users.length} contestants.  That's about ${parseInt(steem / users.length * 100) / 100} SP per person!`)}`
 
-const contestants = (str: string) => `${str}\n${users.reduce((str, user, index) => `${str}${user.username}${index === users.length-1 ? '!' : ', '}`, '')}`
+const contestants = (str: string) => `${str}\n${center(`${users.reduce((str, user, index) => `${str}[${user.username}](steemit.com/nowplaying/@${user.username}/${user.posts[0].permlink})${index === users.length-1 ? '!' : ', '}`, '')}`)}`
 
 const leaderboard = (str: string) => `${str}\n## ${center(`Leaderboards`)}\nRank | User | Weeks | Votes\n-|-|-|-\n${getRankings()}`
 
@@ -36,6 +36,6 @@ export const reportStartWeek = (_users) => {
     users = _users.filter(user => 
         user.posts.find(post => new Date(post.created).getTime() > startWeek.getTime())
         && user.posts.find(post => new Date(post.created).getTime() < endWeek.getTime())
-    )
+    ).filter(user => user.username != 'nowplaying-music')
     return leaderboard(contestants(payout(spotify(subtitle(startTitle())))))
 }
