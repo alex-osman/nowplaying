@@ -39,6 +39,9 @@ export const getDBPosts = async (con) => {
 }
 
 export const getPosts = (): Promise<Post[]> => new Promise((resolve, reject) => {
+  steem.api.setOptions({
+    url: 'wss://steemd-int.steemit.com'
+  });
   steem.api.getDiscussionsByCreated({
     "tag": "nowplaying",
     "limit": 100
