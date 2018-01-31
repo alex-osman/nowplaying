@@ -3,4 +3,6 @@ export class Post {
     permlink: string;
     votes: number;
     created: string;
+    did_comment: boolean;
+    did_vote: boolean;
 }
