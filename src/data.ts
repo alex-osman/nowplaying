@@ -12,7 +12,9 @@ export const getUsers = async (con) => {
     votes: d.votes,
     created: d.created,
     permlink: d.permlink
-  })).reduce((users, post) => {
+  }))
+    .filter(post => post.username != 'loubega' && post.username != 'nowplaying-music')
+    .reduce((users, post) => {
     const user = users.find(user => user.username === post.username)
     if (user) {
       user.posts.push(post)
