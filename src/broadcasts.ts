@@ -74,6 +74,16 @@ export const comment = (post: Post) => {
 
 export const makePost = (post: Post) => {
     return new Promise((resolve, reject) => {
-        steem.broadcast.post(wif, post.author, post.permlink)
+        if (post.author != username) {
+            reject({ error: `The post author is not: ${username}` })
+        }
+        steem.broadcast.comment(wif, '', 'test', post.author, post.permlink, post.title, post.body, post.jsonMetadata, (err, result) => {
+            console.log('posted', err)
+            console.log('result', result)
+            if (err) {
+                reject(err)
+            }
+            resolve(result)
+        })
     })
 }
