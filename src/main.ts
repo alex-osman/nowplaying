@@ -45,18 +45,11 @@ const main = async () => {
 
   const users = await getUsers(con)
   const report = await reportStartWeek(users)
-  console.log(report.post.body)
+  // console.log(report.post.body)
+  ncp.copy(report, () => console.log('Copied to clipboard'))
 
-  // const pos = makePost({
-  //   author: 'walnut1',
-  //   permlink: 'machine-test-0',
-  //   title: 'machine-test-0',
-  //   body: `Trying out some cool stuff`,
-  //   jsonMetadata: {
-  //     app: 'nowplaying',
-  //     tags: ["music", "art", "original", "blog", "life"],
-  //   }
-  // } as Post)
+  // const pos = await makePost(report.post)
+  // console.log(pos)
   // setInterval(async () => {
   //   // comment and vote on everything in the database
   //   commentAndVote(con)
@@ -76,7 +69,7 @@ const main = async () => {
   // const report = reportStartWeek(users.filter(weekFilter(4)))
 
   // console.log(report)
-  // ncp.copy(report, () => console.log('Copied to clipboard'))
+  
 }
 
 main()
