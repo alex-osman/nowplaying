@@ -46,7 +46,7 @@ const main = async () => {
   const users = await getUsers(con)
   const report = await reportStartWeek(users)
   // console.log(report.post.body)
-  ncp.copy(report, () => console.log('Copied to clipboard'))
+  ncp.copy(report.post.body, () => console.log('Copied to clipboard'))
 
   // const pos = await makePost(report.post)
   // console.log(pos)
