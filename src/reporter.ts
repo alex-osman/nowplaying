@@ -2,7 +2,7 @@
 const dateformat = require('dateformat')
 // import { getUsers } from "./database";
 import { User } from './user'
-import { Report } from './Report';
+import { Report } from './report';
 
 const steem = 4.124
 const spotifyLink = 'https://open.spotify.com/user/1240132288/playlist/4tPNWYmR9liqIS1YgMVClv?si=9KJO_Ap2Th-P4Bivv-37cg'
