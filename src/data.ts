@@ -102,16 +102,19 @@ export const writePosts = async (con, posts: Post[]) => {
 }
 
 export const writeComment = async (con, post: Post) => {
-  const res = await con.query('UPDATE posts SET did_comment=1 WHERE author=? AND permlink=?', [post.author, post.permlink])
+  await con.query('UPDATE posts SET did_comment=1 WHERE author=? AND permlink=?', [post.author, post.permlink])
 }
 export const writeVote = async (con, post: Post) => {
-  const res = await con.query('UPDATE posts SET did_vote=1 WHERE author=? AND permlink=?', [post.author, post.permlink])
+  await con.query('UPDATE posts SET did_vote=1 WHERE author=? AND permlink=?', [post.author, post.permlink])
 }
 
 export const getPost = (data) => new Promise((resolve, reject) => {
   steem.api.getContent(data.author, data.permlink, (err, result) => {
+    if (err) {
+      reject(err)
+    }
     resolve(result)
   });
 })
 
-export const updateComment = (con, post: Post) => (con.query('UPDATE posts SET did_comment=1') as Promise<{}>)
+// export const updateComment = (con, post: Post) => (con.query('UPDATE posts SET did_comment=1') as Promise<{}>)

@@ -1,33 +1,15 @@
 const ncp = require('copy-paste')
-import {
-  weekFilter
-} from './filters'
+
 import {
   reportStartWeek
 } from './reporter';
 import {
   getUsers,
-  getDBPosts,
-  writePosts,
-  writeComment,
-  writeVote,
-  getPosts,
 } from './data';
-import {
-  Post
-} from './post';
-import {
-  vote,
-  voteErrs,
-  comment,
-  makePost
-} from './broadcasts';
-import {
-  commentAndVote
-} from './bot';
 
-const MILLI_PER_SECOND = 1000;
-const SECONDS = 60;
+
+// const MILLI_PER_SECOND = 1000;
+// const SECONDS = 60;
 
 const mysql = require('promise-mysql');
 
@@ -69,7 +51,7 @@ const main = async () => {
   // const report = reportStartWeek(users.filter(weekFilter(4)))
 
   // console.log(report)
-  
+
 }
 
 main()

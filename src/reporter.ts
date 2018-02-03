@@ -4,9 +4,9 @@ const dateformat = require('dateformat')
 import { User } from './user'
 import { Report } from './report';
 
-const steem = 4.124
-const spotifyLink = 'https://open.spotify.com/user/1240132288/playlist/4tPNWYmR9liqIS1YgMVClv?si=9KJO_Ap2Th-P4Bivv-37cg'
-const spotifyImg = 'https://steemitimages.com/DQmVQbXpqHthPR7n2gfcvM4yaUKoez1HRojDNnDA9YqWTpR/image.png'
+// const steem = 4.124
+// const spotifyLink = 'https://open.spotify.com/user/1240132288/playlist/4tPNWYmR9liqIS1YgMVClv?si=9KJO_Ap2Th-P4Bivv-37cg'
+// const spotifyImg = 'https://steemitimages.com/DQmVQbXpqHthPR7n2gfcvM4yaUKoez1HRojDNnDA9YqWTpR/image.png'
 const week = 6
 const startWeek = new Date(2018, 0, (week - 1) * 7)
 const endWeek = new Date(2018, 0, (week) * 7 - 1)
@@ -22,10 +22,10 @@ const startTitle = (report: Report): Report => {
     report.post.body = `${report.post.body}# ${center(`Now Playing: Week ${week} (${dateformat(startWeek, 'mmm d')} - ${dateformat(endWeek, 'mmm d')})`)}`
     return report
 }
-const endTitle = (report: Report): Report => {
-    report.post.body = `${report.post.body}# ${center(`Now Playing Recap: Week ${week} (${dateformat(startWeek, 'mmm d')} - ${dateformat(endWeek, 'mmm d')})`)}`
-    return report
-}
+// const endTitle = (report: Report): Report => {
+//     report.post.body = `${report.post.body}# ${center(`Now Playing Recap: Week ${week} (${dateformat(startWeek, 'mmm d')} - ${dateformat(endWeek, 'mmm d')})`)}`
+//     return report
+// }
 
 const subtitle = (report: Report): Report => {
     report.post.body = `${report.post.body}\n${center(`\`Now Playing\` is a way to share what you're listening to this week with others.`)}`
@@ -54,20 +54,20 @@ const rules = (report: Report): Report => {
     return report
 }
 
-const spotify = (report: Report): Report => {
-    report.post.body = `${report.post.body}\n## ${center(`[Spotify Playlist](${spotifyLink})`)}\n${center(`[![](${spotifyImg})](${spotifyLink})`)}`
-    return report
-}
+// const spotify = (report: Report): Report => {
+//     report.post.body = `${report.post.body}\n## ${center(`[Spotify Playlist](${spotifyLink})`)}\n${center(`[![](${spotifyImg})](${spotifyLink})`)}`
+//     return report
+// }
 
-const payout = (report: Report): Report => {
-    report.post.body = `${report.post.body}\n ${center(`Week ${week} Contestants`)}\n${center(`We had a total payout of about ${steem} STEEM, which will be powered up to all ${report.users.length} contestants.  That's about ${parseInt(String(steem / report.users.length * 100)) / 100} SP per person!`)}`
-    return report
-}
+// const payout = (report: Report): Report => {
+//     report.post.body = `${report.post.body}\n ${center(`Week ${week} Contestants`)}\n${center(`We had a total payout of about ${steem} STEEM, which will be powered up to all ${report.users.length} contestants.  That's about ${parseInt(String(steem / report.users.length * 100)) / 100} SP per person!`)}`
+//     return report
+// }
 
-const contestants = (report: Report): Report => {
-    report.post.body = `${report.post.body}\n${center(`${report.users.reduce((str, user, index) => `${str}[${user.username}](steemit.com/nowplaying/@${user.username}/${user.posts[0].permlink})${index === report.users.length-1 ? '!' : ', '}`, '')}`)}`
-    return report
-}
+// const contestants = (report: Report): Report => {
+//     report.post.body = `${report.post.body}\n${center(`${report.users.reduce((str, user, index) => `${str}[${user.username}](steemit.com/nowplaying/@${user.username}/${user.posts[0].permlink})${index === report.users.length-1 ? '!' : ', '}`, '')}`)}`
+//     return report
+// }
 
 const leaderboard = (report: Report): Report => {
     report.post.body = `${report.post.body}\n## ${center(`Leaderboards`)}\nRank | User | Weeks | Votes\n-|-|-|-\n${getRankings(report.users)}`

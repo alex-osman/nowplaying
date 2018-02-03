@@ -17,15 +17,15 @@ export const commentAndVote = async (con) => {
     // console.log(toComment)
     toComment.forEach((post, index) => setTimeout(async () => {
         // console.log('comment', post)
-        const commentResponse = await comment(post)
-        const wroteComment = await writeComment(con, post)
+        await comment(post)
+        await writeComment(con, post)
     }, index * 25000))
 
     const toVote = posts.filter(p => !p.did_vote)
     console.log(`${toVote.length} toVote`)
     toVote.forEach((post, index) => setTimeout(async () => {
         // console.log('vote', post)
-        const voteResponse = await vote(post)
-        const wroteVote = await writeVote(con, post)
+        await vote(post)
+        await writeVote(con, post)
     }, index * 5000))
 }
