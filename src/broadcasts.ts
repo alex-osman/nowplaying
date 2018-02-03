@@ -77,7 +77,7 @@ export const makePost = (post: Post) => {
         if (post.author != username) {
             reject({ error: `The post author is not: ${username}` })
         }
-        steem.broadcast.comment(wif, '', 'test', post.author, post.permlink, post.title, post.body, post.jsonMetadata, (err, result) => {
+        steem.broadcast.comment(wif, '', post.jsonMetadata.tags[0], post.author, post.permlink, post.title, post.body, post.jsonMetadata, (err, result) => {
             console.log('posted', err)
             console.log('result', result)
             if (err) {

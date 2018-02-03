@@ -44,8 +44,8 @@ const main = async () => {
   const con = await mysql.createConnection(local)
 
   const users = await getUsers(con)
-  const report = await reportStartWeek(users.filter(weekFilter(5)))
-  console.log(report)
+  const report = await reportStartWeek(users)
+  console.log(report.post.body)
 
   // const pos = makePost({
   //   author: 'walnut1',
@@ -54,7 +54,6 @@ const main = async () => {
   //   body: `Trying out some cool stuff`,
   //   jsonMetadata: {
   //     app: 'nowplaying',
-  //     format: 'markdown',
   //     tags: ["music", "art", "original", "blog", "life"],
   //   }
   // } as Post)
