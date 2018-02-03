@@ -13,9 +13,18 @@ import {
   writeVote,
   getPosts,
 } from './data';
-import { Post } from './post';
-import { vote, voteErrs, comment } from './broadcasts';
-import { commentAndVote } from './bot';
+import {
+  Post
+} from './post';
+import {
+  vote,
+  voteErrs,
+  comment,
+  makePost
+} from './broadcasts';
+import {
+  commentAndVote
+} from './bot';
 
 const MILLI_PER_SECOND = 1000;
 const SECONDS = 60;
@@ -33,18 +42,26 @@ const local = {
 
 const main = async () => {
   const con = await mysql.createConnection(local)
-  setInterval(async () => {
-    // comment and vote on everything in the database
-    commentAndVote(con)
 
-    // scrape for more posts
-    const posts = await getPosts()
-    console.log(posts.length, 'scraped')
+  const users = await getUsers(con)
+  const report = await reportStartWeek(users)
+  // console.log(report.post.body)
+  ncp.copy(report.post.body, () => console.log('Copied to clipboard'))
 
-    // add to database
-    const write = await writePosts(con, posts)
-    console.log(write)
-  }, SECONDS * MILLI_PER_SECOND)
+  // const pos = await makePost(report.post)
+  // console.log(pos)
+  // setInterval(async () => {
+  //   // comment and vote on everything in the database
+  //   commentAndVote(con)
+
+  //   // scrape for more posts
+  //   const posts = await getPosts()
+  //   console.log(posts.length, 'scraped')
+
+  //   // add to database
+  //   const write = await writePosts(con, posts)
+  //   console.log(write)
+  // }, SECONDS * MILLI_PER_SECOND)
 
   // const comment = await commentPosts(con, posts.filter(commentFilter))
   // const vote = await commentPosts(con, posts.filter(voteFilter))
@@ -52,7 +69,7 @@ const main = async () => {
   // const report = reportStartWeek(users.filter(weekFilter(4)))
 
   // console.log(report)
-  // ncp.copy(report, () => console.log('Copied to clipboard'))
+  
 }
 
 main()
