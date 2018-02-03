@@ -1,7 +1,6 @@
 import { JsonMetadata } from './jsonMetadata'
 export class Post {
-    votes: number;
-
+    
     // STEEM
     author: string;
     permlink: string;
@@ -9,6 +8,7 @@ export class Post {
     title: string;
     body: string;
     jsonMetadata: JsonMetadata;
+    votes: number;
 
     // SQL
     did_comment: boolean;
