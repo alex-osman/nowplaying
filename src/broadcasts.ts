@@ -71,3 +71,9 @@ export const comment = (post: Post) => {
         })
     })
 }
+
+export const makePost = (post: Post) => {
+    return new Promise((resolve, reject) => {
+        steem.broadcast.post(wif, post.author, post.permlink)
+    })
+}
