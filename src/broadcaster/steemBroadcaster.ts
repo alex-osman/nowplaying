@@ -77,6 +77,7 @@ export class SteemBroadcaster {
                 if (err) {
                     if (err.data.code == 10) {
                         // Only comment every 20 seconds
+                        console.log('can only comment once every 20 seconds')
                         reject(1)
                     } else {
                         console.log('commenting error')

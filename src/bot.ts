@@ -41,8 +41,13 @@ export class Bot {
 
     async scrape(): Promise<any> {
         try {
+            console.log(this._blockchainAPI)
             const posts = await this._blockchainAPI.getPosts(this.communityName)
-            const write = await this._database.writePosts(posts)
+            const write = await this._database.writePosts(posts, async post => {
+                const comment = await this._broadcaster.makeComment(post)
+                const vote = await this._broadcaster.makeVote(post)
+                return { comment, vote }
+            })
             console.log(write)
         } catch(e) {
             console.log(e)
@@ -50,7 +55,7 @@ export class Bot {
         }
     }
 
-    async payout(): Promise<any> {
+    async payout(totalPayout: number): Promise<any> {
         const allUsers = await this._database.getUsers()
         const weekUsers = allUsers.filter(weekFilter(this.week))
 
@@ -58,7 +63,6 @@ export class Bot {
         wallet.setActive(this.getActiveWif())
 
         // Payout each user
-        const totalPayout = 2;
         const individualPayout = totalPayout / weekUsers.length
         let current = 0;
         weekUsers.forEach((user, index) => {

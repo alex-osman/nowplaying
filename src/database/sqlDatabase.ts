@@ -51,15 +51,16 @@ export class sqlDatabase {
         }) as Post)
     }
 
-    async writePosts(posts: Post[]): Promise<any> {
+    async writePosts(posts: Post[], onInsert: (post: Post) => Promise<any>): Promise<any> {
         try {
             const insertResponses: { post: Post, result: any }[] = await Promise.all(
                 posts.map(async post => {
-                    let result = {
+                    let result: any = {
                         err: true
                     }
                     try {
                         result = await this._con.query('INSERT INTO posts SET ?', [post])
+                        result.onInsert = await onInsert(post)
                     } catch (e) {
                         // console.log('error inserting prolly cause im there already')
                     }
