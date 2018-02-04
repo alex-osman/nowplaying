@@ -17,7 +17,7 @@ const local = {
 const main = async () => {
   const bot = new Bot()
   bot.communityName = 'nowplaying'
-  bot.week = 4
+  bot.week = 5
   bot.username = process.env.STEEM_USERNAME
   bot.password = process.env.STEEM_PASSWORD
   bot.setBroadcaster(new SteemBroadcaster())
@@ -25,7 +25,7 @@ const main = async () => {
   await bot.setDatabase(new sqlDatabase(local))
   // bot.scrape()
   // setInterval(() => bot.scrape(), 1000 * 60) // every minute
-  // const payout = await bot.payout(1.425)
+  const payout = await bot.payout(1.425)
   // console.log(payout)
 }
 

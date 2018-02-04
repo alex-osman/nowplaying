@@ -70,7 +70,7 @@ export class Bot {
                 try {
                     const transaction = await wallet.powerUp(user, individualPayout)
                     current += individualPayout
-                    console.log(`${current.toFixed(3)}/${totalPayout} STEEM, [${index}/${weekUsers.length}] transactions complete...`)
+                    console.log(`${current.toFixed(3)}/${totalPayout} STEEM, [${index+1}/${weekUsers.length}] transactions complete...`)
                 } catch(e) {
                     console.log('ran into an error')
                     console.log('~~~~~', user, index)
