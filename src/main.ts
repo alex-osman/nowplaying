@@ -17,7 +17,7 @@ const local = {
 const main = async () => {
   const bot = new Bot()
   bot.communityName = 'nowplaying'
-  bot.week = 5
+  bot.week = 4
   bot.username = process.env.STEEM_USERNAME
   bot.password = process.env.STEEM_PASSWORD
   bot.setBroadcaster(new SteemBroadcaster())
