@@ -7,5 +7,4 @@ export interface Broadcaster {
     makeComment: (post: Post) => Promise<any>
     makePost: (post: Post) => Promise<any>
 
-    curate: (post: Post) => Promise<any>
 }

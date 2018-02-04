@@ -17,12 +17,13 @@ const local = {
 const main = async () => {
   const bot = new Bot()
   bot.communityName = 'nowplaying'
+  bot.week = 5
   bot.username = process.env.STEEM_USERNAME
   bot.password = process.env.STEEM_PASSWORD
   bot.setBroadcaster(new SteemBroadcaster())
   bot.setBlockchainAPI(new SteemAPI())
   await bot.setDatabase(new sqlDatabase(local))
-  await bot.test()
+  const payout = await bot.payout()
 }
 
 main()

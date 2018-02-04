@@ -2,6 +2,7 @@ import { Broadcaster } from './broadcaster/broadcaster';
 import { Database } from './database/database'
 import { BlockchainAPI } from './blockchainAPI/blockchainAPI'
 import { User } from './classes/user';
+import { weekFilter } from './filters';
 
 const steem = require('steem')
 
@@ -49,18 +50,32 @@ export class Bot {
         }
     }
 
-    async test() {
+    async payout(): Promise<any> {
+        const allUsers = await this._database.getUsers()
+        const weekUsers = allUsers.filter(weekFilter(this.week))
+
         const wallet = await this._blockchainAPI.getWallet({ username: this.username } as User)
         wallet.setActive(this.getActiveWif())
-        console.log(wallet)
-        try {
-            // const transaction = await wallet.sendSteem({ username: 'loubega' } as User, .001)
-            const transaction = await wallet.powerUp({ username: 'loubega' } as User, .001)
-            // console.log(transaction)
-        } catch(e) {
-            console.log('caught an error')
-            console.log(e)
-        }
+
+        // Payout each user
+        const totalPayout = 2;
+        const individualPayout = totalPayout / weekUsers.length
+        let current = 0;
+        weekUsers.forEach((user, index) => {
+            setTimeout(async () => {
+                try {
+                    const transaction = await wallet.powerUp(user, individualPayout)
+                    current += individualPayout
+                    console.log(`${current.toFixed(3)} / ${totalPayout} transactions complete...`)
+                } catch(e) {
+                    console.log('ran into an error')
+                    console.log('~~~~~', user, index)
+                    console.log(e)
+                }
+            }, index * 1000)
+            // 1 second delay between transaction
+        })
+
     }
 
     async postWeek(): Promise<any> {
