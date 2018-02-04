@@ -1,31 +1,27 @@
-import {
-  getDBPosts,
-  writeComment,
-  writeVote,
-} from './data';
-import { Post } from './post';
-import { vote, comment } from './broadcasts';
+import { Broadcaster } from './broadcaster';
+
+const steem = require('steem')
+
+export class Bot {
+    con: any;              // sql connection
+    week: number;          // 5
+    communityName: string; // nowplaying
+    username: string;      // nowplaying-music
+    password: string;
+
+    private _broadcaster: Broadcaster;
 
 
-export const commentAndVote = async (con) => {
-    console.log('searching...')
+    getPostingWif(): string {
+        return steem.auth.toWif(this.username, this.password, 'posting')
+    }
 
-    const posts = await getDBPosts(con) as Post[]
-    console.log(`${posts.length} posts total`)
-    const toComment = posts.filter(p => !p.did_comment)
-    console.log(`${toComment.length} toComment`)
-    // console.log(toComment)
-    toComment.forEach((post, index) => setTimeout(async () => {
-        // console.log('comment', post)
-        await comment(post)
-        await writeComment(con, post)
-    }, index * 25000))
+    getActiveWif(): string {
+        return steem.auth.toWif(this.username, this.password, 'active')
+    }
 
-    const toVote = posts.filter(p => !p.did_vote)
-    console.log(`${toVote.length} toVote`)
-    toVote.forEach((post, index) => setTimeout(async () => {
-        // console.log('vote', post)
-        await vote(post)
-        await writeVote(con, post)
-    }, index * 5000))
+    setBroadcaster(broadcaster: Broadcaster): void {
+        broadcaster.setCredentials(this.username, this.getPostingWif())
+        this._broadcaster = broadcaster
+    }
 }

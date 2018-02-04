@@ -6,10 +6,8 @@ import {
 import {
   getUsers,
 } from './data';
-
-
-// const MILLI_PER_SECOND = 1000;
-// const SECONDS = 60;
+import { Bot } from './bot';
+import { SteemBroadcaster } from './broadcasts';
 
 const mysql = require('promise-mysql');
 
@@ -23,12 +21,22 @@ const local = {
 
 
 const main = async () => {
-  const con = await mysql.createConnection(local)
+  const bot = new Bot()
+  bot.communityName = 'nowplaying'
+  bot.con = await mysql.createConnection(local)
+  bot.username = process.env.STEEM_USERNAME
+  bot.password = process.env.STEEM_PASSWORD
+  bot.broadcaster = new SteemBroadcaster()
 
-  const users = await getUsers(con)
-  const report = await reportStartWeek(users)
-  // console.log(report.post.body)
-  ncp.copy(report.post.body, () => console.log('Copied to clipboard'))
+  bot.scrape()
+
+
+  // const users = await bot.getUsers()
+
+  // const users = await getUsers(con)
+  // const report = await reportStartWeek(users)
+  // // console.log(report.post.body)
+  // ncp.copy(report.post.body, () => console.log('Copied to clipboard'))
 
   // const pos = await makePost(report.post)
   // console.log(pos)
