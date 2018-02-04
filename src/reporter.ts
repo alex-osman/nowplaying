@@ -38,9 +38,9 @@ const rules = (report: Report): Report => {
 | Upvote this post and at least one other #nowplaying entry
 
 ## <center>Rewards</center>
-| Rewards from this post will be split among all contestants
+| Rewards from this post will be split among all contributors equally
 | -
-| Contestants are anyone who follows all of the above rules
+| A contributor is anyone who follows all of the above rules
 `
     return report
 }
@@ -76,9 +76,13 @@ const leaderboard = (report: Report): Report => {
 
 export const reportStartWeek = (_users) => {
     const report = new Report()
+    report.reportOptions.week = 6
+    report.reportOptions.startWeek = new Date(2018, 0, (report.reportOptions.week - 1) * 7)
+    report.reportOptions.endWeek = new Date(2018, 0, (report.reportOptions.week) * 7 - 1)
     report.users = _users.filter(user => user.username != 'nowplaying-music')
     report.post.author = 'nowplaying-music'
     report.post.body = ''
+    report.post.permlink = `nowplaying-week-${report.reportOptions.week}`
     report.post.jsonMetadata.app = 'nowplaying'
     report.post.jsonMetadata.tags = ['nowplaying', 'music', 'contest', 'share', 'spotify']
     report.post.title = `Now Playing: Week ${report.reportOptions.week} (${dateformat(report.reportOptions.startWeek, 'mmm d')} - ${dateformat(report.reportOptions.endWeek, 'mmm d')})`
