@@ -1,14 +1,6 @@
-<<<<<<< HEAD
-
 import { Broadcaster } from './broadcaster/broadcaster';
 import { Database } from './database/database'
 import { BlockchainAPI } from './blockchainAPI/blockchainAPI'
-=======
-import { reportStartWeek } from './reporter';
-import { Broadcaster } from './broadcaster';
-import { BlockchainAPI } from './blockchainAPI';
-import { Database } from './database';
->>>>>>> 96534b3f1f769f4ed1275a1d8c7961f55b2c7eb8
 
 const steem = require('steem')
 
@@ -56,21 +48,20 @@ export class Bot {
         }
     }
 
-<<<<<<< HEAD
     async curate() {
         this._broadcaster.curate()
-=======
+    }
+
     async postWeek(): Promise<any> {
         try {
             const users = await this._database.getUsers()
             const report = await reportStartWeek(users)
             // const post = await this._broadcaster.makePost(report.post)
-            
+
             // console.log(post)
         } catch(e) {
             console.log(e)
             console.log('got err')
         }
->>>>>>> 96534b3f1f769f4ed1275a1d8c7961f55b2c7eb8
     }
 }

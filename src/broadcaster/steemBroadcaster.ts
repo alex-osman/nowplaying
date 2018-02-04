@@ -103,7 +103,7 @@ export class SteemBroadcaster {
         })
     }
 
-    curate(post: Post): Promise<any> {
+    getWallet(): Promise<Wallet> {
         return new Promise((resolve, reject) => {
             steem.api.getAccounts([this._username], (err, response) => {
                 const wallet = new Wallet()
