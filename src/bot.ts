@@ -1,3 +1,4 @@
+import { reportStartWeek } from './reporter';
 import { Broadcaster } from './broadcaster';
 import { BlockchainAPI } from './blockchainAPI';
 import { Database } from './database';
@@ -42,6 +43,19 @@ export class Bot {
             const posts = await this._blockchainAPI.getPosts(this.communityName)
             const write = await this._database.writePosts(posts)
             console.log(write)
+        } catch(e) {
+            console.log(e)
+            console.log('got err')
+        }
+    }
+
+    async postWeek(): Promise<any> {
+        try {
+            const users = await this._database.getUsers()
+            const report = await reportStartWeek(users)
+            // const post = await this._broadcaster.makePost(report.post)
+            
+            // console.log(post)
         } catch(e) {
             console.log(e)
             console.log('got err')

@@ -8,8 +8,7 @@ import { Report } from './report';
 // const spotifyLink = 'https://open.spotify.com/user/1240132288/playlist/4tPNWYmR9liqIS1YgMVClv?si=9KJO_Ap2Th-P4Bivv-37cg'
 // const spotifyImg = 'https://steemitimages.com/DQmVQbXpqHthPR7n2gfcvM4yaUKoez1HRojDNnDA9YqWTpR/image.png'
 // const week = 6
-// const startWeek = new Date(2018, 0, (week - 1) * 7)
-// const endWeek = new Date(2018, 0, (week) * 7 - 1)
+// 
 
 const getRankings = (report: Report) => report.users
     .map(user => Object.assign({}, user, { totalVotes: user.posts.map(post => post.votes).reduce((totalVotes, votes) => totalVotes + votes, 0) }))
@@ -47,9 +46,9 @@ const rules = (report: Report): Report => {
 | Upvote this post and at least one other #nowplaying entry
 
 ## <center>Rewards</center>
-| Rewards from this post will be split among all contestants
+| Rewards from this post will be split among all contributors equally
 | -
-| Contestants are anyone who follows all of the above rules
+| A contributor is anyone who follows all of the above rules
 `
     return report
 }
@@ -85,9 +84,13 @@ const leaderboard = (report: Report): Report => {
 
 export const reportStartWeek = (_users) => {
     const report = new Report()
+    report.reportOptions.week = 6
+    report.reportOptions.startWeek = new Date(2018, 0, (report.reportOptions.week - 1) * 7)
+    report.reportOptions.endWeek = new Date(2018, 0, (report.reportOptions.week) * 7 - 1)
     report.users = _users.filter(user => user.username != 'nowplaying-music')
     report.post.author = 'nowplaying-music'
     report.post.body = ''
+    report.post.permlink = `nowplaying-week-${report.reportOptions.week}`
     report.post.jsonMetadata.app = 'nowplaying'
     report.post.jsonMetadata.tags = ['nowplaying', 'music', 'contest', 'share', 'spotify']
     report.post.title = `Now Playing: Week ${report.reportOptions.week} (${dateformat(report.reportOptions.startWeek, 'mmm d')} - ${dateformat(report.reportOptions.endWeek, 'mmm d')})`

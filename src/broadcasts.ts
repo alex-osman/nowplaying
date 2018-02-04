@@ -89,6 +89,7 @@ export class SteemBroadcaster {
     }
     makePost(post: Post): Promise<any> {
         return new Promise((resolve, reject) => {
+            console.log(post)
             steem.broadcast.comment(this._postingWif, '', post.jsonMetadata.tags[0], this._username, post.permlink, post.title, post.body, post.jsonMetadata, (err, result) => {
                 console.log('posted', err)
                 console.log('result', result)

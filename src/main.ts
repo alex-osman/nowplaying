@@ -31,6 +31,7 @@ const main = async () => {
   await bot.setDatabase(new sqlDatabase(local))
 
   bot.scrape()
+  // bot.postWeek()
 }
 
 main()
