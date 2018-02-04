@@ -1,15 +1,10 @@
 const ncp = require('copy-paste')
 
-import {
-  reportStartWeek
-} from './reporter';
-import {
-  getUsers,
-} from './data';
 import { Bot } from './bot';
-import { SteemBroadcaster } from './broadcasts';
-import { sqlDatabase } from './sqlDatabase';
-import { SteemAPI } from './steemAPI';
+import { SteemBroadcaster } from './broadcaster/steemBroadcaster';
+import { sqlDatabase } from './database/sqlDatabase';
+import { SteemAPI } from './blockchainAPI/steemAPI';
+
 
 const mysql = require('promise-mysql');
 
@@ -29,8 +24,9 @@ const main = async () => {
   bot.setBroadcaster(new SteemBroadcaster())
   bot.setBlockchainAPI(new SteemAPI())
   await bot.setDatabase(new sqlDatabase(local))
+  await bot.curate()
 
-  bot.scrape()
+  // bot.scrape()
 }
 
 main()
