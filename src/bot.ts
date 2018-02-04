@@ -1,9 +1,7 @@
 
 import { Broadcaster } from './broadcaster/broadcaster';
-
-// import { Broadcaster } from './broadcaster';
-// import { BlockchainAPI } from './blockchainAPI';
-// import { Database } from './database';
+import { Database } from './database/database'
+import { BlockchainAPI } from './blockchainAPI/blockchainAPI'
 
 const steem = require('steem')
 
@@ -52,6 +50,6 @@ export class Bot {
     }
 
     async curate() {
-        console.log('curate')
+        this._broadcaster.curate()
     }
 }

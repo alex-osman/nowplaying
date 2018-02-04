@@ -1,4 +1,4 @@
-import { Post } from './post';
+import { Post } from '../classes/post';
 const steem = require('steem')
 
 export class SteemAPI {

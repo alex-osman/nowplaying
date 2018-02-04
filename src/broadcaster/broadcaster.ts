@@ -1,4 +1,4 @@
-import { Post } from './post';
+import { Post } from '../classes/post';
 
 export interface Broadcaster {
     setCredentials: (username: string, postingWif?: string, activeWif?: string) => void
@@ -6,4 +6,6 @@ export interface Broadcaster {
     makeVote: (post: Post, votingPower: number) => Promise<any>
     makeComment: (post: Post) => Promise<any>
     makePost: (post: Post) => Promise<any>
+
+    curate: (post: Post) => Promise<any>
 }

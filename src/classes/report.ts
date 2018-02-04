@@ -1,6 +1,7 @@
-import { User } from './user';
+
 import { Post } from './post';
 import { reportOptions } from './reportOptions';
+import { User } from './user';
 
 export class Report {
     users: User[];

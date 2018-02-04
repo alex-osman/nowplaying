@@ -1,4 +1,6 @@
-import { Post } from './post'
+import { Post } from '../classes/post';
+import { Wallet } from '../classes/wallet';
+
 const steem = require('steem')
 export class SteemBroadcaster {
     private _voteErrs: Array<string> = ['placeholder', 'Vote too small', 'already voted', 'wait 3 sec', 'max vote changes']
@@ -96,6 +98,19 @@ export class SteemBroadcaster {
                     reject(err)
                 }
                 resolve(result)
+            })
+        })
+    }
+
+    curate(post: Post): Promise<any> {
+        return new Promise((resolve, reject) => {
+            steem.api.getAccounts([this._username], (err, response) => {
+                const wallet = new Wallet()
+                console.log(response)
+                wallet.parseSBD(response[0].sbd_balance)
+                wallet.parseSteem(response[0].balance)
+
+                console.log(wallet)
             })
         })
     }

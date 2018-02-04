@@ -1,5 +1,3 @@
-const ncp = require('copy-paste')
-
 import { Bot } from './bot';
 import { SteemBroadcaster } from './broadcaster/steemBroadcaster';
 import { sqlDatabase } from './database/sqlDatabase';
@@ -25,8 +23,6 @@ const main = async () => {
   bot.setBlockchainAPI(new SteemAPI())
   await bot.setDatabase(new sqlDatabase(local))
   await bot.curate()
-
-  // bot.scrape()
 }
 
 main()

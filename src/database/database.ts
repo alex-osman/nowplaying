@@ -1,5 +1,5 @@
-import { User } from './user';
-import { Post } from './post';
+import { User } from '../classes/user';
+import { Post } from '../classes/post';
 
 export interface Database {
     setup: () => Promise<void>

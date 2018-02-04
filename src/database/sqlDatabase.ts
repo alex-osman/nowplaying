@@ -1,10 +1,7 @@
+import { User } from '../classes/user';
+import { Post } from '../classes/post';
+
 const mysql = require('promise-mysql')
-import {
-    User
-} from './user';
-import {
-    Post
-} from './post';
 
 export class sqlDatabase {
     private _con: any;
