@@ -22,7 +22,7 @@ const main = async () => {
   bot.setBroadcaster(new SteemBroadcaster())
   bot.setBlockchainAPI(new SteemAPI())
   await bot.setDatabase(new sqlDatabase(local))
-  await bot.curate()
+  await bot.test()
 }
 
 main()

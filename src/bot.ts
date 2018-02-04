@@ -1,6 +1,7 @@
 import { Broadcaster } from './broadcaster/broadcaster';
 import { Database } from './database/database'
 import { BlockchainAPI } from './blockchainAPI/blockchainAPI'
+import { User } from './classes/user';
 
 const steem = require('steem')
 
@@ -48,8 +49,18 @@ export class Bot {
         }
     }
 
-    async curate() {
-        this._broadcaster.curate()
+    async test() {
+        const wallet = await this._blockchainAPI.getWallet({ username: this.username } as User)
+        wallet.setActive(this.getActiveWif())
+        console.log(wallet)
+        try {
+            // const transaction = await wallet.sendSteem({ username: 'loubega' } as User, .001)
+            const transaction = await wallet.powerUp({ username: 'loubega' } as User, .001)
+            // console.log(transaction)
+        } catch(e) {
+            console.log('caught an error')
+            console.log(e)
+        }
     }
 
     async postWeek(): Promise<any> {

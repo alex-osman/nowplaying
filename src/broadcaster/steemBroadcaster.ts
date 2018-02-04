@@ -102,18 +102,5 @@ export class SteemBroadcaster {
             })
         })
     }
-
-    getWallet(): Promise<Wallet> {
-        return new Promise((resolve, reject) => {
-            steem.api.getAccounts([this._username], (err, response) => {
-                const wallet = new Wallet()
-                console.log(response)
-                wallet.parseSBD(response[0].sbd_balance)
-                wallet.parseSteem(response[0].balance)
-
-                console.log(wallet)
-            })
-        })
-    }
 }
 

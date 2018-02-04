@@ -1,4 +1,6 @@
 import { Post } from '../classes/post';
+import { Wallet } from '../classes/wallet';
+import { User } from '../classes/user';
 const steem = require('steem')
 
 export class SteemAPI {
@@ -25,6 +27,21 @@ export class SteemAPI {
                         }) as Post)
                     )
                 }
+            })
+        })
+    }
+
+    getWallet(user: User): Promise<Wallet> {
+        return new Promise((resolve, reject) => {
+            steem.api.getAccounts([user.username], (err, response) => {
+                if (err || response.length != 1) {
+                    reject({ err })
+                }
+                const wallet = new Wallet(user)
+                wallet.parseSBD(response[0].sbd_balance)
+                wallet.parseSteem(response[0].balance)
+
+                resolve(wallet)
             })
         })
     }
