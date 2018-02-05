@@ -3,6 +3,7 @@ import { Database } from './database/database'
 import { BlockchainAPI } from './blockchainAPI/blockchainAPI'
 import { User } from './classes/user';
 import { weekFilter } from './filters';
+import { Statistics } from './statistics';
 
 const steem = require('steem')
 
@@ -93,5 +94,13 @@ export class Bot {
             console.log(e)
             console.log('got err')
         }
+    }
+
+    async stats() {
+        const statistics = Statistics.Instance()
+        statistics.posts = await this._database.getPosts()
+        statistics.users = await this._database.getUsers()
+
+        statistics.general()
     }
 }
