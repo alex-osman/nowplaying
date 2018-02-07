@@ -1,3 +1,4 @@
+import { reportStartWeek, playerStats } from './reporter';
 import { Broadcaster } from './broadcaster/broadcaster';
 import { Database } from './database/database'
 import { BlockchainAPI } from './blockchainAPI/blockchainAPI'
@@ -7,6 +8,7 @@ import { Statistics } from './statistics';
 
 const steem = require('steem')
 
+// this should be a singleton
 export class Bot {
     week: number;          // 5
     communityName: string; // nowplaying
@@ -45,11 +47,14 @@ export class Bot {
             console.log(this._blockchainAPI)
             const posts = await this._blockchainAPI.getPosts(this.communityName)
             const write = await this._database.writePosts(posts, async post => {
-                const comment = await this._broadcaster.makeComment(post)
-                const vote = await this._broadcaster.makeVote(post)
-                return { comment, vote }
+                const users = await this._database.getUsers()
+                const commentBody = `Thanks for entering this week's #nowplaying!\nRank | Posts | Votes\n -|-|-\n${playerStats(users, post.author)}`
+                console.log(commentBody)
+                // const comment = await this._broadcaster.makeComment(post)
+                // const vote = await this._broadcaster.makeVote(post)
+                // return { comment, vote }
             })
-            console.log(write)
+            // console.log(write)
         } catch(e) {
             console.log(e)
             console.log('got err')
@@ -86,7 +91,8 @@ export class Bot {
     async postWeek(): Promise<any> {
         try {
             const users = await this._database.getUsers()
-            const report = await reportStartWeek(users)
+            // const report = await reportStartWeek(users)
+            // const stats = await playerStats(users, 'v1tko')
             // const post = await this._broadcaster.makePost(report.post)
 
             // console.log(post)

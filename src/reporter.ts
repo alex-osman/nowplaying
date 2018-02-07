@@ -1,11 +1,16 @@
+import { User } from './classes/user';
 
 const dateformat = require('dateformat')
 import { Report } from './classes/report'
 
-const getRankings = (report: Report) => report.users
+const getRankings = (report: Report): string[] => report.users
     .map(user => Object.assign({}, user, { totalVotes: user.posts.map(post => post.votes).reduce((totalVotes, votes) => totalVotes + votes, 0) }))
     .sort((a, b) => b.posts.length - a.posts.length || b.totalVotes - a.totalVotes)
-    .reduce((str, user, index) => `${str}${index + 1} | @${user.username} | ${user.posts.length > report.reportOptions.week ? report.reportOptions.week : user.posts.length} | ${user.posts.reduce((prev, cur) => prev + cur.votes, 0)}\n`, '')
+    .reduce((str, user, index) => str.concat({ text: `${index + 1} | ${user.posts.length > report.reportOptions.week ? report.reportOptions.week : user.posts.length} | ${user.posts.reduce((prev, cur) => prev + cur.votes, 0)}\n`, author: user.username }), [])
+    // .reduce((str, user, index) => str.concat(`${index + 1} | @${user.username} | ${user.posts.length > report.reportOptions.week ? report.reportOptions.week : user.posts.length} | ${user.posts.reduce((prev, cur) => prev + cur.votes, 0)}\n`), [])
+
+export const playerStats = (users: User[], username: string) => getRankings({ users, reportOptions: { week: 5}} as Report).find(x => x.author === username).text
+    // getRankings({users, reportOptions: {week: 5}} as Report).find(str => str.includes(`@${username}`))
 
 const center = (str: string) => `<center>${str}</center>`
 
@@ -89,3 +94,4 @@ export const reportStartWeek = (_users) => {
 
     return leaderboard(rules(logo(subtitle(startTitle(report)))))
 }
+

@@ -1,16 +1,16 @@
 
 import { Post } from './post';
-import { reportOptions } from './reportOptions';
+import { ReportOptions } from './ReportOptions';
 import { User } from './user';
 
 export class Report {
     users: User[];
     post: Post;
-    reportOptions: reportOptions;
+    reportOptions: ReportOptions;
 
     constructor() {
         this.users = [];
-        this.reportOptions = {} as reportOptions;
+        this.reportOptions = {} as ReportOptions;
         this.post = new Post();
     }
 }

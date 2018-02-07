@@ -1,5 +1,6 @@
 import { Post } from '../classes/post';
 import { Wallet } from '../classes/wallet';
+import { sqlDatabase } from '../database/sqlDatabase';
 
 const steem = require('steem')
 export class SteemBroadcaster {
@@ -72,8 +73,8 @@ export class SteemBroadcaster {
     }
 
     makeComment(post: Post): Promise<any> {
-        return new Promise((resolve, reject) => {
-            steem.broadcast.comment(this._postingWif, post.author, post.permlink, this._username, `nowplaying-${new Date().getTime()}`, '', `Thanks for entering this week's #nowplaying!`, { tags: ['nowplaying', 'music'], app: 'nowplaying/week5'}, (err, result) => {
+        return new Promise(async (resolve, reject) => {
+            steem.broadcast.comment(this._postingWif, post.author, post.permlink, this._username, `nowplaying-${new Date().getTime()}`, '', commentBody, { tags: ['nowplaying', 'music'], app: 'nowplaying/week5'}, (err, result) => {
                 if (err) {
                     if (err.data.code == 10) {
                         // Only comment every 20 seconds

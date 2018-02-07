@@ -59,7 +59,8 @@ export class sqlDatabase {
                         err: true
                     }
                     try {
-                        result = await this._con.query('INSERT INTO posts SET ?', [post])
+                        // result = await this._con.query('INSERT INTO posts SET ?', [post])
+                        console.log(post)
                         result.onInsert = await onInsert(post)
                     } catch (e) {
                         // console.log('error inserting prolly cause im there already')
