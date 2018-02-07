@@ -1,33 +1,8 @@
-const ncp = require('copy-paste')
-import {
-  weekFilter
-} from './filters'
-import {
-  reportStartWeek
-} from './reporter';
-import {
-  getUsers,
-  getDBPosts,
-  writePosts,
-  writeComment,
-  writeVote,
-  getPosts,
-} from './data';
-import {
-  Post
-} from './post';
-import {
-  vote,
-  voteErrs,
-  comment,
-  makePost
-} from './broadcasts';
-import {
-  commentAndVote
-} from './bot';
+import { Bot } from './bot';
+import { SteemBroadcaster } from './broadcaster/steemBroadcaster';
+import { sqlDatabase } from './database/sqlDatabase';
+import { SteemAPI } from './blockchainAPI/steemAPI';
 
-const MILLI_PER_SECOND = 1000;
-const SECONDS = 60;
 
 const mysql = require('promise-mysql');
 
@@ -35,41 +10,23 @@ const local = {
   host: 'localhost',
   user: 'root', //process.env.DB_USER,
   password: 'password', //process.env.DB_PASS,
-  database: 'nowplaying',
-  dateStrings: true
+  database: 'nowplaying'
 };
 
 
 const main = async () => {
-  const con = await mysql.createConnection(local)
-
-  const users = await getUsers(con)
-  const report = await reportStartWeek(users)
-  // console.log(report.post.body)
-  ncp.copy(report.post.body, () => console.log('Copied to clipboard'))
-
-  // const pos = await makePost(report.post)
-  // console.log(pos)
-  // setInterval(async () => {
-  //   // comment and vote on everything in the database
-  //   commentAndVote(con)
-
-  //   // scrape for more posts
-  //   const posts = await getPosts()
-  //   console.log(posts.length, 'scraped')
-
-  //   // add to database
-  //   const write = await writePosts(con, posts)
-  //   console.log(write)
-  // }, SECONDS * MILLI_PER_SECOND)
-
-  // const comment = await commentPosts(con, posts.filter(commentFilter))
-  // const vote = await commentPosts(con, posts.filter(voteFilter))
-
-  // const report = reportStartWeek(users.filter(weekFilter(4)))
-
-  // console.log(report)
-  
+  const bot = new Bot()
+  bot.communityName = 'nowplaying'
+  bot.week = 5
+  bot.username = process.env.STEEM_USERNAME
+  bot.password = process.env.STEEM_PASSWORD
+  bot.setBroadcaster(new SteemBroadcaster())
+  bot.setBlockchainAPI(new SteemAPI())
+  await bot.setDatabase(new sqlDatabase(local))
+  // bot.scrape()
+  // setInterval(() => bot.scrape(), 1000 * 60) // every minute
+  const payout = await bot.payout(1.425)
+  // console.log(payout)
 }
 
 main()
