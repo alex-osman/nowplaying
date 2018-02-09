@@ -1,4 +1,5 @@
 import { User } from './classes/user';
+import { weekFilter } from './filters';
 
 const dateformat = require('dateformat')
 import { Report } from './classes/report'
@@ -18,10 +19,10 @@ const startTitle = (report: Report): Report => {
     report.post.body = `${report.post.body}# ${center(`Now Playing: Week ${report.reportOptions.week} (${dateformat(report.reportOptions.startWeek, 'mmm d')} - ${dateformat(report.reportOptions.endWeek, 'mmm d')})`)}`
     return report
 }
-// const endTitle = (report: Report): Report => {
-//     report.post.body = `${report.post.body}# ${center(`Now Playing Recap: Week ${week} (${dateformat(startWeek, 'mmm d')} - ${dateformat(endWeek, 'mmm d')})`)}`
-//     return report
-// }
+const endTitle = (report: Report): Report => {
+    report.post.body = `${report.post.body}# ${center(`Now Playing Recap: Week ${report.reportOptions.week} (${dateformat(report.reportOptions.startWeek, 'mmm d')} - ${dateformat(report.reportOptions.endWeek, 'mmm d')})`)}`
+    return report
+}
 
 const subtitle = (report: Report): Report => {
     report.post.body = `${report.post.body}\n${center(`\`Now Playing\` is a way to share what you're listening to this week with others.`)}`
@@ -50,20 +51,20 @@ const rules = (report: Report): Report => {
     return report
 }
 
-// const spotify = (report: Report): Report => {
-//     report.post.body = `${report.post.body}\n## ${center(`[Spotify Playlist](${spotifyLink})`)}\n${center(`[![](${spotifyImg})](${spotifyLink})`)}`
-//     return report
-// }
+const spotify = (report: Report): Report => {
+    report.post.body = `${report.post.body}\n## ${center(`[Spotify Playlist](${report.reportOptions.spotifyLink})`)}\n${center(`[![](${report.reportOptions.spotifyImg})](${report.reportOptions.spotifyLink})`)}`
+    return report
+}
 
-// const payout = (report: Report): Report => {
-//     report.post.body = `${report.post.body}\n ${center(`Week ${week} Contestants`)}\n${center(`We had a total payout of about ${steem} STEEM, which will be powered up to all ${report.users.length} contestants.  That's about ${parseInt(String(steem / report.users.length * 100)) / 100} SP per person!`)}`
-//     return report
-// }
+const payout = (report: Report): Report => {
+    report.post.body = `${report.post.body}\n ${center(`Week ${report.reportOptions.week} Contestants`)}\n${center(`We had a total payout of about ${report.reportOptions.payout} STEEM, which will be powered up to all ${report.users.length} contestants.  That's about ${parseInt(String(report.reportOptions.payout / report.users.length * 100)) / 100} SP per person!`)}`
+    return report
+}
 
-// const contestants = (report: Report): Report => {
-//     report.post.body = `${report.post.body}\n${center(`${report.users.reduce((str, user, index) => `${str}[${user.username}](steemit.com/nowplaying/@${user.username}/${user.posts[0].permlink})${index === report.users.length-1 ? '!' : ', '}`, '')}`)}`
-//     return report
-// }
+const contestants = (report: Report): Report => {
+    report.post.body = `${report.post.body}\n${center(`${report.users.reduce((str, user, index) => `${str}[${user.username}](steemit.com/nowplaying/@${user.username}/${user.posts[0].permlink})${index === report.users.length-1 ? '!' : ', '}`, '')}`)}`
+    return report
+}
 
 const leaderboard = (report: Report): Report => {
     report.post.body = `${report.post.body}\n## ${center(`Leaderboards`)}\nRank | User | Weeks | Votes\n-|-|-|-\n${getRankings(report)}`
@@ -71,13 +72,24 @@ const leaderboard = (report: Report): Report => {
 }
 
 
-// export const reportRecap = (_users) => {
-//     users = _users.filter(user =>
-//         user.posts.find(post => new Date(post.created).getTime() > startWeek.getTime())
-//         && user.posts.find(post => new Date(post.created).getTime() < endWeek.getTime())
-//     ).filter(user => user.username != 'nowplaying-music')
-//     return leaderboard(contestants(payout(spotify(subtitle(startTitle())))))
-// }
+export const reportRecap = (_users) => {
+    const report = new Report()
+    report.reportOptions.week = 5
+    report.reportOptions.startWeek = new Date(2018, 0, (report.reportOptions.week - 1) * 7)
+    report.reportOptions.endWeek = new Date(2018, 0, (report.reportOptions.week) * 7 - 1)
+    report.reportOptions.payout = 1.425
+    report.reportOptions.spotifyLink = 'https://open.spotify.com/user/1240132288/playlist/2bMoA2zdj1Ij7B0NNPyG0c'
+    report.reportOptions.spotifyImg = 'https://steemitimages.com/DQmYFnWjYgyagcjKY37S6dVSSkeutHmUVNvgFWRnDBrpdb1/image.png'
+
+    report.users = _users.filter(user => user.username != 'nowplaying-music')//.filter(weekFilter(report.reportOptions.week))
+    report.post.author = 'nowplaying-music'
+    report.post.body = ''
+    report.post.permlink = `nowplaying-recap-week-${report.reportOptions.week}`
+    report.post.jsonMetadata.app = 'nowplaying'
+    report.post.jsonMetadata.tags = ['nowplaying', 'music', 'contest', 'share', 'spotify']
+    report.post.title = `Spotify Playlist: Week ${report.reportOptions.week} (${dateformat(report.reportOptions.startWeek, 'mmm d')} - ${dateformat(report.reportOptions.endWeek, 'mmm d')})`
+    return leaderboard(contestants(payout(spotify(subtitle(endTitle(report))))))
+}
 
 export const reportStartWeek = (_users) => {
     const report = new Report()
