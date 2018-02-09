@@ -33,19 +33,17 @@ export class Statistics {
     public general() {
         console.log('posts: ', this._posts.length)
         console.log('users: ', this._users.length)
-        const weeks = [1, 2, 3, 4, 5]
+        const weeks = [1, 2, 3, 4, 5, 6]
             .map(weekNum => ({ weekNum, posts: this._posts.filter(postWeekFilter(weekNum))}))
             .map(week => ({ length: week.posts.length, posts: week.posts, weekNum: week.weekNum }))
             .map(week => ({
                 ...week,
+                votes: week.posts.map(p => p.votes).reduce((p, c) => p + c, 0),
                 authors: week.posts
                     .map(post => post.author)
                     .filter((author, index, authors) => authors.indexOf(author) === index)
-                }))
-            .map(week => ({
-                ...week,
-                votes: week.posts.map(p => p.votes).reduce((p, c) => p + c, 0)
-            }))
+                })
+            )
             
         console.log(weeks.map(week => `Week ${week.weekNum} had ${week.length} entries with ${week.authors.length} users and ${week.votes} total votes!`))
     }
