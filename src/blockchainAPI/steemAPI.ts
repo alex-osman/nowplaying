@@ -11,13 +11,14 @@ export class SteemAPI {
         return new Promise((resolve, reject) => {
             steem.api.getDiscussionsByCreated({
                 "tag": tag,
-                "limit": 100
+                "limit": 10
             }, (err, result) => {
                 if (err) {
                     reject(err)
                 } else {
-                    resolve(
-                        result.map(post => ({
+                    resolve(result
+                        .filter(x => x.category === tag)
+                        .map(post => ({
                             author: post.author,
                             permlink: post.permlink,
                             created: post.created,

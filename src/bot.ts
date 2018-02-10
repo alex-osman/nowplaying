@@ -44,9 +44,13 @@ export class Bot {
             console.log(this._blockchainAPI)
             const posts = await this._blockchainAPI.getPosts(this.communityName)
             const write = await this._database.writePosts(posts, async post => {
-                const comment = await this._broadcaster.makeComment(post)
-                const vote = await this._broadcaster.makeVote(post)
-                return { comment, vote }
+                try {
+                    const comment = await this._broadcaster.makeComment(post)
+                } catch(e) { }
+                try {
+                    const vote = await this._broadcaster.makeVote(post)
+                } catch(e) { }
+                return { }
             })
             console.log(write)
         } catch(e) {

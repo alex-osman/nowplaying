@@ -16,7 +16,7 @@ export class sqlDatabase {
     }
 
     async getUsers(): Promise < User[] > {
-        const users: Array < any > = await this._con.query('SELECT * FROM posts');
+        const users: Array < any > = await this._con.query('SELECT * FROM posts WHERE is_approved=1');
         return users
             .map(data => ({
                 author: data.author,
@@ -40,7 +40,7 @@ export class sqlDatabase {
     }
 
     async getPosts(): Promise < Post[] > {
-        const posts: Array < any > = await this._con.query('SELECT * FROM posts');
+        const posts: Array < any > = await this._con.query('SELECT * FROM posts WHERE is_approved=1');
         return posts.map(d => ({
             author: d.author,
             permlink: d.permlink,
@@ -52,6 +52,7 @@ export class sqlDatabase {
     }
 
     async writePosts(posts: Post[], onInsert: (post: Post) => Promise<any>): Promise<any> {
+        let count = 0;
         try {
             const insertResponses: { post: Post, result: any }[] = await Promise.all(
                 posts.map(async post => {
@@ -60,7 +61,8 @@ export class sqlDatabase {
                     }
                     try {
                         result = await this._con.query('INSERT INTO posts SET ?', [post])
-                        result.onInsert = await onInsert(post)
+                        setTimeout(() => onInsert(post), 20*1000*count)
+                        count++;
                     } catch (e) {
                         // console.log('error inserting prolly cause im there already')
                     }
