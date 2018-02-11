@@ -22,9 +22,12 @@ export class sqlDatabase {
                 author: data.author,
                 votes: data.votes,
                 created: data.created,
-                permlink: data.permlink
+                permlink: data.permlink,
+                did_comment: data.did_comment,
+                did_vote: data.did_vote,
+                is_approved: data.is_approved
             }) as Post)
-            .filter((post) => post.author != 'loubega' && post.author != 'nowplaying-music')
+            .filter((post) => post.author != 'loubega')
             .reduce((users: User[], post) => {
                 const user = users.find(user => user.username === post.author)
                 if (user) {
@@ -51,45 +54,47 @@ export class sqlDatabase {
         }) as Post)
     }
 
-    async writePosts(posts: Post[], onInsert: (post: Post) => Promise<any>): Promise<any> {
-        let count = 0;
-        try {
-            const insertResponses: { post: Post, result: any }[] = await Promise.all(
-                posts.map(async post => {
-                    let result: any = {
-                        err: true
-                    }
-                    try {
-                        result = await this._con.query('INSERT INTO posts SET ?', [post])
-                        setTimeout(() => onInsert(post), 20*1000*count)
-                        count++;
-                    } catch (e) {
-                        // console.log('error inserting prolly cause im there already')
-                    }
-                    return {
-                        post,
-                        result
-                    }
-                })
-            )
-            const toUpdate = insertResponses.filter(res => !res.result.changedRows)
-            const updateResponses = await Promise.all(toUpdate.map(async postObj => ({
-                post: postObj.post,
-                result: await this._con.query('UPDATE posts SET votes=? WHERE author=? AND permlink=?', [postObj.post.votes, postObj.post.author, postObj.post.permlink])
-            })))
-            return {
-                created: insertResponses.length - toUpdate.length,
-                updated: updateResponses.filter(res => res.result.changedRows).length,
-                total: insertResponses.length
-            }
-        } catch (e) {
-            if (e.code === 'ER_DUP_ENTRY') {
-                return {
-                    already: "there"
+    async writePosts(posts: Post[]): Promise<any> {
+        const insertResponses: { post: Post, result: any }[] = await Promise.all(
+            posts.map(async post => {
+                let result: any = {
+                    err: true
                 }
-            } else {
-                throw e
-            }
+                try {
+                    result = await this._con.query('INSERT INTO posts SET ?', [post])
+                } catch (e) {
+                    // console.log('error inserting prolly cause im there already')
+                }
+                return {
+                    post,
+                    result
+                }
+            })
+        )
+
+        const toUpdate = insertResponses.filter(res => !res.result.changedRows)
+
+        const updateResponses = await Promise.all(toUpdate.map(async postObj => ({
+            post: postObj.post,
+            result: await this._con.query('UPDATE posts SET votes=? WHERE author=? AND permlink=?', [postObj.post.votes, postObj.post.author, postObj.post.permlink])
+        })))
+        
+        return {
+            created: insertResponses.length - toUpdate.length,
+            updated: updateResponses.filter(res => res.result.changedRows).length,
+            total: insertResponses.length
         }
+    }
+
+    async writeComment(post: Post): Promise<any> {
+        const result = await this._con.query('UPDATE posts SET did_comment=1 WHERE author=? AND permlink=?', [post.author, post.permlink])
+        console.log(result)
+        return new Promise(resolve => resolve('hello'))
+    }
+    
+    async writeVote(post: Post): Promise<any> {
+        const result = await this._con.query('UPDATE posts SET did_vote=1 WHERE author=? AND permlink=?', [post.author, post.permlink])
+        console.log(result)
+        return new Promise(resolve => resolve('hello'))
     }
 }

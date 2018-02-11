@@ -3,14 +3,18 @@ import { Database } from './database/database'
 import { BlockchainAPI } from './blockchainAPI/blockchainAPI'
 import { User } from './classes/user';
 import { weekFilter } from './filters';
+import { Post } from './classes/post';
+import { cleanScrape } from './functions';
 
 const steem = require('steem')
 
 export class Bot {
-    week: number;          // 5
+    week: number;
     communityName: string; // nowplaying
     username: string;      // nowplaying-music
     password: string;
+    users: User[];
+    posts: Post[];
 
     private _broadcaster: Broadcaster;
     private _blockchainAPI: BlockchainAPI;
@@ -37,25 +41,51 @@ export class Bot {
     async setDatabase(database: Database): Promise<void> {
         this._database = database
         await this._database.setup()
+        this.users = await this._database.getUsers()
     }
 
     async scrape(): Promise<any> {
         try {
-            console.log(this._blockchainAPI)
-            const posts = await this._blockchainAPI.getPosts(this.communityName)
-            const write = await this._database.writePosts(posts, async post => {
-                try {
-                    const comment = await this._broadcaster.makeComment(post)
-                } catch(e) { }
-                try {
-                    const vote = await this._broadcaster.makeVote(post)
-                } catch(e) { }
-                return { }
-            })
-            console.log(write)
+            const x = await this._blockchainAPI.getPosts(this.communityName)
+            const posts = await cleanScrape(x, this.users)
+            console.log(await this._database.writePosts(posts))
         } catch(e) {
             console.log(e)
             console.log('got err')
+        }
+    }
+
+    async comment(): Promise<any> {
+        try {
+            const allPosts = await this._database.getPosts()
+            const toCommentPosts = allPosts.filter(post => !post.did_comment)
+            
+            // Comment on each one with 20 second breaks
+            toCommentPosts.forEach((post, index) => {
+                setTimeout(() => {
+                    this._broadcaster.makeComment(post)
+                    this._database.writeComment(post)
+                }, index * 22 * 1000)
+            })
+        } catch(e) {
+            console.log('something went wrong', e)
+        }
+    }
+    
+    async vote(): Promise<any> {
+        try {
+            const allPosts = await this._database.getPosts()
+            const toVotePosts = allPosts.filter(post => !post.did_vote)
+            
+            // Comment on each one with 20 second breaks
+            toVotePosts.forEach((post, index) => {
+                setTimeout(() => {
+                    this._broadcaster.makeVote(post)
+                    this._database.writeVote(post)
+                }, index * 22 * 1000)
+            })
+        } catch(e) {
+            console.log('something went wrong', e)
         }
     }
 
