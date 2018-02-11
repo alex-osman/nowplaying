@@ -3,6 +3,7 @@ import { reportOptions } from './classes/reportOptions';
 
 const dateformat = require('dateformat')
 import { Report } from './classes/report'
+import { settings } from './settings';
 
 const getRankings = (report: Report) => report.users
     .map(user => Object.assign({}, user, { totalVotes: user.posts.map(post => post.votes).reduce((totalVotes, votes) => totalVotes + votes, 0) }))
@@ -70,34 +71,34 @@ const leaderboard = (report: Report): Report => {
 
 export const reportRecap = (_users) => {
     const report = new Report()
-    report.reportOptions.week = 5
+    report.reportOptions.week = settings.week
     report.reportOptions.startWeek = new Date(2018, 0, (report.reportOptions.week - 1) * 7)
     report.reportOptions.endWeek = new Date(2018, 0, (report.reportOptions.week) * 7 - 1)
-    report.reportOptions.payout = 1.425
+    report.reportOptions.payout = settings.payout
     report.reportOptions.spotifyLink = 'https://open.spotify.com/user/1240132288/playlist/2bMoA2zdj1Ij7B0NNPyG0c'
     report.reportOptions.spotifyImg = 'https://steemitimages.com/DQmYFnWjYgyagcjKY37S6dVSSkeutHmUVNvgFWRnDBrpdb1/image.png'
 
     report.users = _users.filter(user => user.username != 'nowplaying-music')//.filter(weekFilter(report.reportOptions.week))
-    report.post.author = 'nowplaying-music'
+    report.post.author = settings.username
     report.post.body = ''
     report.post.permlink = `nowplaying-recap-week-${report.reportOptions.week}`
-    report.post.jsonMetadata.app = 'nowplaying'
-    report.post.jsonMetadata.tags = ['nowplaying', 'music', 'contest', 'share', 'spotify']
+    report.post.jsonMetadata.app = settings.communityName
+    report.post.jsonMetadata.tags = settings.tags
     report.post.title = `Spotify Playlist: Week ${report.reportOptions.week} (${dateformat(report.reportOptions.startWeek, 'mmm d')} - ${dateformat(report.reportOptions.endWeek, 'mmm d')})`
     return leaderboard(contestants(payout(spotify(subtitle(endTitle(report))))))
 }
 
 export const reportStartWeek = (_users) => {
     const report = new Report()
-    report.reportOptions.week = 6
+    report.reportOptions.week = settings.week
     report.reportOptions.startWeek = new Date(2018, 0, (report.reportOptions.week - 1) * 7)
     report.reportOptions.endWeek = new Date(2018, 0, (report.reportOptions.week) * 7 - 1)
     report.users = _users.filter(user => user.username != 'nowplaying-music')
-    report.post.author = 'nowplaying-music'
+    report.post.author = settings.username
     report.post.body = ''
     report.post.permlink = `nowplaying-week-${report.reportOptions.week}`
-    report.post.jsonMetadata.app = 'nowplaying'
-    report.post.jsonMetadata.tags = ['nowplaying', 'music', 'contest', 'share', 'spotify']
+    report.post.jsonMetadata.app = settings.communityName
+    report.post.jsonMetadata.tags = settings.tags
     report.post.title = `Now Playing: Week ${report.reportOptions.week} (${dateformat(report.reportOptions.startWeek, 'mmm d')} - ${dateformat(report.reportOptions.endWeek, 'mmm d')})`
 
     return leaderboard(rules(logo(subtitle(startTitle(report)))))
