@@ -24,11 +24,15 @@ const main = async () => {
   bot.setBlockchainAPI(new SteemAPI())
   await bot.setDatabase(new sqlDatabase(local))
   // bot.scrape()
-  bot.comment()
-  bot.vote()
+  
+  
+  // every minute scrape, vote, and comment
+  setInterval(() => {
+    bot.scrape()
+    bot.vote()
+    bot.comment()
+  }, 1000 * 60)
 
-  // bot.scrape()
-  // setInterval(() => bot.scrape(), 1000 * 60) // every minute
   // const payout = await bot.payout(1.425)
   // console.log(payout)
 }
