@@ -7,9 +7,9 @@ import { SteemAPI } from './blockchainAPI/steemAPI';
 const mysql = require('promise-mysql');
 
 const local = {
-  host: 'localhost',
-  user: 'root', //process.env.DB_USER,
-  password: 'password', //process.env.DB_PASS,
+  host: '192.168.0.2',
+  user: 'nodice', //process.env.DB_USER,
+  password: '', //process.env.DB_PASS,
   database: 'nowplaying'
 };
 
@@ -24,8 +24,12 @@ const main = async () => {
   bot.setBlockchainAPI(new SteemAPI())
   await bot.setDatabase(new sqlDatabase(local))
   // bot.scrape()
+  bot.comment()
+  bot.vote()
+
+  // bot.scrape()
   // setInterval(() => bot.scrape(), 1000 * 60) // every minute
-  const payout = await bot.payout(1.425)
+  // const payout = await bot.payout(1.425)
   // console.log(payout)
 }
 

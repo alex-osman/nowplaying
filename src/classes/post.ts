@@ -13,6 +13,7 @@ export class Post {
     // SQL
     did_comment: boolean;
     did_vote: boolean;
+    is_approved: boolean;
 
     constructor() {
         this.jsonMetadata = {} as JsonMetadata
