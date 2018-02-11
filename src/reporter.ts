@@ -1,6 +1,3 @@
-import { weekFilter } from './filters';
-import { reportOptions } from './classes/reportOptions';
-
 const dateformat = require('dateformat')
 import { Report } from './classes/report'
 import { settings } from './settings';

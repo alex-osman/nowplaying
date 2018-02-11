@@ -59,7 +59,7 @@ export class Bot {
         try {
             const allPosts = await this._database.getPosts()
             const toCommentPosts = allPosts.filter(post => !post.did_comment)
-            
+
             // Comment on each one with 20 second breaks
             toCommentPosts.forEach((post, index) => {
                 setTimeout(() => {
@@ -71,12 +71,12 @@ export class Bot {
             console.log('something went wrong', e)
         }
     }
-    
+
     async vote(): Promise<any> {
         try {
             const allPosts = await this._database.getPosts()
             const toVotePosts = allPosts.filter(post => !post.did_vote)
-            
+
             // Comment on each one with 20 second breaks
             toVotePosts.forEach((post, index) => {
                 setTimeout(() => {
@@ -102,7 +102,7 @@ export class Bot {
         weekUsers.forEach((user, index) => {
             setTimeout(async () => {
                 try {
-                    const transaction = await wallet.powerUp(user, individualPayout)
+                    await wallet.powerUp(user, individualPayout)
                     current += individualPayout
                     console.log(`${current.toFixed(3)}/${totalPayout} STEEM, [${index+1}/${weekUsers.length}] transactions complete...`)
                 } catch(e) {
@@ -119,7 +119,8 @@ export class Bot {
     async postWeek(): Promise<any> {
         try {
             const users = await this._database.getUsers()
-            const report = await reportStartWeek(users)
+            console.log(users)
+            // const report = await reportStartWeek(users)
             // const post = await this._broadcaster.makePost(report.post)
 
             // console.log(post)

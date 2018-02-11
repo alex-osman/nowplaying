@@ -4,9 +4,6 @@ import { sqlDatabase } from './database/sqlDatabase';
 import { SteemAPI } from './blockchainAPI/steemAPI';
 import { settings } from './settings';
 
-
-const mysql = require('promise-mysql');
-
 const local = {
   host: '127.0.0.1',
   user: process.env.DB_USER,
@@ -34,8 +31,6 @@ const main = async () => {
     bot.comment()
   }, 1000 * 60)
 
-  // const payout = await bot.payout(1.425)
-  // console.log(payout)
 }
 
 main()

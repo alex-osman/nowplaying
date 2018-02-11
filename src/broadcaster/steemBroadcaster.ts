@@ -1,18 +1,15 @@
 import { Post } from '../classes/post';
-import { Wallet } from '../classes/wallet';
 
 const steem = require('steem')
 export class SteemBroadcaster {
     private _voteErrs: Array<string> = ['placeholder', 'Vote too small', 'already voted', 'wait 3 sec', 'max vote changes']
     private _username: string;
     private _postingWif: string;
-    private _activeWif: string;
     private _debug: boolean;
 
-    setCredentials(username: string, postingWif: string, activeWif: string): void {
+    setCredentials(username: string, postingWif: string): void {
         this._username = username;
         this._postingWif = postingWif;
-        this._activeWif = activeWif;
     }
 
     makeVote(post: Post, votingPower: number = 100): Promise<any> {
