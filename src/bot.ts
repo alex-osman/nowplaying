@@ -1,3 +1,4 @@
+import { reportStartWeek, reportRecap } from './reporter';
 import { Broadcaster } from './broadcaster/broadcaster';
 import { Database } from './database/database'
 import { BlockchainAPI } from './blockchainAPI/blockchainAPI'
@@ -5,6 +6,7 @@ import { User } from './classes/user';
 import { weekFilter } from './filters';
 import { Post } from './classes/post';
 import { cleanScrape } from './functions';
+const ncp = require('copy-paste')
 
 const steem = require('steem')
 
@@ -119,8 +121,10 @@ export class Bot {
     async postWeek(): Promise<any> {
         try {
             const users = await this._database.getUsers()
-            console.log(users)
             // const report = await reportStartWeek(users)
+            const report = await reportRecap(users)
+            console.log(report.post.body)
+            ncp.copy(report.post.title, () => console.log('Copied to clipboard'))
             // const post = await this._broadcaster.makePost(report.post)
 
             // console.log(post)
