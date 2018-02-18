@@ -2,7 +2,7 @@ export const settings = {
     communityName: 'nowplaying',
     username: process.env.STEEM_USERNAME,
     password: process.env.STEEM_PASSWORD,
-    week: 6,
+    week: 8,
     payout: .435,
     tags: ['nowplaying', 'music', 'contest', 'share', 'spotify'],
     blacklist: [

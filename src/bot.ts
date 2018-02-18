@@ -5,6 +5,7 @@ import { User } from './classes/user';
 import { weekFilter } from './filters';
 import { Post } from './classes/post';
 import { cleanScrape } from './functions';
+import { reportStartWeek } from './reporter';
 
 const steem = require('steem')
 
@@ -119,8 +120,9 @@ export class Bot {
     async postWeek(): Promise<any> {
         try {
             const users = await this._database.getUsers()
-            console.log(users)
-            // const report = await reportStartWeek(users)
+            // console.log(users)
+            const report = await reportStartWeek(users)
+            console.log(report.post.body)
             // const post = await this._broadcaster.makePost(report.post)
 
             // console.log(post)
