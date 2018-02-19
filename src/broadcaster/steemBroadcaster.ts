@@ -72,7 +72,9 @@ export class SteemBroadcaster {
 
     makeComment(post: Post): Promise<any> {
         return new Promise(async (resolve, reject) => {
-            steem.broadcast.comment(this._postingWif, post.author, post.permlink, this._username, `nowplaying-${new Date().getTime()}`, '', commentBody, { tags: ['nowplaying', 'music'], app: 'nowplaying/week5'}, (err, result) => {
+            console.log('commenting on ', post.author, post.permlink)
+            const commentBody = `Thanks for entering this week's #nowplaying!`
+            steem.broadcast.comment(this._postingWif, post.author, post.permlink, this._username, `nowplaying-${new Date().getTime()}`, '', commentBody, { tags: ['nowplaying', 'music'], app: `nowplaying`}, (err, result) => {
                 if (err) {
                     if (err.data.code == 10) {
                         // Only comment every 20 seconds

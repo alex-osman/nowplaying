@@ -7,7 +7,7 @@ import { weekFilter } from './filters';
 import { Statistics } from './statistics';
 import { Post } from './classes/post';
 import { cleanScrape } from './functions';
-=
+
 const steem = require('steem')
 
 // this should be a singleton
@@ -49,9 +49,13 @@ export class Bot {
 
     async scrape(): Promise<any> {
         try {
-            const x = await this._blockchainAPI.getPosts(this.communityName)
-            const posts = await cleanScrape(x, this.users)
-            console.log(await this._database.writePosts(posts))
+            const weekPost = await this._blockchainAPI.getPost({ author: this.username, permlink: `nowplaying-week-${this.week}`} as Post)
+            const allPosts = await this._blockchainAPI.getPosts(this.communityName)
+            const posts = await cleanScrape(allPosts, weekPost)
+            const results = await this._database.writePosts(posts)
+            console.log('valid', posts.filter(p => p.is_approved).length)
+            console.log('invalid', posts.filter(p => !p.is_approved).length)
+            console.log(results)
         } catch(e) {
             console.log(e)
             console.log('got err')
@@ -61,6 +65,7 @@ export class Bot {
     async comment(): Promise<any> {
         try {
             const allPosts = await this._database.getPosts()
+            // Comment regardless of approved
             const toCommentPosts = allPosts.filter(post => !post.did_comment)
 
             // Comment on each one with 20 second breaks
@@ -78,14 +83,15 @@ export class Bot {
     async vote(): Promise<any> {
         try {
             const allPosts = await this._database.getPosts()
-            const toVotePosts = allPosts.filter(post => !post.did_vote)
+            // Only vote on approved posts
+            const toVotePosts = allPosts.filter(post => !post.did_vote && post.is_approved)
 
-            // Comment on each one with 20 second breaks
+            // Vote on each one with 20 second breaks
             toVotePosts.forEach((post, index) => {
                 setTimeout(() => {
                     this._broadcaster.makeVote(post)
                     this._database.writeVote(post)
-                }, index * 22 * 1000)
+                }, index * 5 * 1000)
             })
         } catch(e) {
             console.log('something went wrong', e)

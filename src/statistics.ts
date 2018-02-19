@@ -1,6 +1,7 @@
 import { postWeekFilter } from './filters';
 import { Post } from './classes/post';
 import { User } from './classes/user';
+import { settings } from './settings';
 
 export class Statistics {
     private static statistics: Statistics = null;
@@ -33,7 +34,7 @@ export class Statistics {
     public general() {
         console.log('posts: ', this._posts.length)
         console.log('users: ', this._users.length)
-        const weeks = [1, 2, 3, 4, 5, 6, 7]
+        const weeks = [...Array(settings.week + 1).keys()]
             .map(weekNum => ({ weekNum, posts: this._posts.filter(postWeekFilter(weekNum))}))
             .map(week => ({ length: week.posts.length, posts: week.posts, weekNum: week.weekNum }))
             .map(week => ({
