@@ -2,33 +2,27 @@ import { Bot } from './bot';
 import { SteemBroadcaster } from './broadcaster/steemBroadcaster';
 import { sqlDatabase } from './database/sqlDatabase';
 import { SteemAPI } from './blockchainAPI/steemAPI';
-
-
-const mysql = require('promise-mysql');
+import { settings } from './settings';
 
 const local = {
-  host: '192.168.0.2',
-  user: 'nodice', //process.env.DB_USER,
-  password: '', //process.env.DB_PASS,
-  database: 'nowplaying'
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: settings.communityName
 };
 
 
 const main = async () => {
   const bot = new Bot()
-  bot.communityName = 'nowplaying'
-  bot.week = 7
-  bot.username = process.env.STEEM_USERNAME
-  bot.password = process.env.STEEM_PASSWORD
+  bot.communityName = settings.communityName
+  bot.week = settings.week
+  bot.username = settings.username
+  bot.password = settings.password
   bot.setBroadcaster(new SteemBroadcaster())
   bot.setBlockchainAPI(new SteemAPI())
   await bot.setDatabase(new sqlDatabase(local))
-  // bot.postWeek()
   bot.stats()
-  // bot.scrape()
-  // setInterval(() => bot.scrape(), 1000 * 60) // every minute
-  // const payout = await bot.payout(1.425)
-  // console.log(payout)
+
 }
 
 main()

@@ -16,14 +16,16 @@ export class SteemAPI {
                 if (err) {
                     reject(err)
                 } else {
-                    resolve(
-                        result.map(post => ({
+                    resolve(result
+                        // .filter(x => x.category === tag)
+                        .map(post => ({
                             author: post.author,
                             permlink: post.permlink,
                             created: post.created,
                             votes: post.active_votes.length,
                             did_comment: false,
                             did_vote: false,
+                            is_approved: false,
                         }) as Post)
                     )
                 }
