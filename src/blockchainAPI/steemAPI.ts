@@ -38,7 +38,6 @@ export class SteemAPI {
         steem.api.setOptions({
             url: 'wss://steemd-int.steemit.com'
         });
-        post.permlink = 's4k49-now-playing-week-7-feb-11-feb-17'
         return new Promise((resolve, reject) => {
             steem.api.getContent(post.author, post.permlink, (err, result) => {
                 if (err) {
