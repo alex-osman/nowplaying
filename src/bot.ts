@@ -70,9 +70,13 @@ export class Bot {
 
             // Comment on each one with 20 second breaks
             toCommentPosts.forEach((post, index) => {
-                setTimeout(() => {
-                    this._broadcaster.makeComment(post)
-                    this._database.writeComment(post)
+                setTimeout(async () => {
+                    try {
+                        await this._broadcaster.makeComment(post)
+                        await this._database.writeComment(post)
+                    } catch(e) {
+                        console.log('err commenting')
+                    }
                 }, index * 22 * 1000)
             })
         } catch(e) {

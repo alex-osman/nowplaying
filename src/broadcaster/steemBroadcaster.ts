@@ -76,17 +76,21 @@ export class SteemBroadcaster {
             const commentBody = `Thanks for entering this week's #nowplaying!`
             steem.broadcast.comment(this._postingWif, post.author, post.permlink, this._username, `nowplaying-${new Date().getTime()}`, '', commentBody, { tags: ['nowplaying', 'music'], app: `nowplaying`}, (err, result) => {
                 if (err) {
-                    if (err.data.code == 10) {
-                        // Only comment every 20 seconds
-                        console.log('can only comment once every 20 seconds')
-                        reject(1)
-                    } else {
-                        console.log('commenting error')
-                        reject(err)
+                    try {
+                        if (err.data.code == 10) {
+                            // Only comment every 20 seconds
+                            console.log('can only comment once every 20 seconds')
+                            return reject(err)
+                        } else {
+                            console.log('commenting error')
+                            return reject(err)
+                        }
+                    } catch(e) {
+                        return reject(err)
                     }
                 } else {
                     console.log('successfully commented on ', post.author)
-                    resolve(result)
+                    return resolve(result)
                 }
             })
         })
