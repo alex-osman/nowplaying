@@ -92,9 +92,14 @@ export class Bot {
 
             // Vote on each one with 20 second breaks
             toVotePosts.forEach((post, index) => {
-                setTimeout(() => {
-                    this._broadcaster.makeVote(post)
-                    this._database.writeVote(post)
+                setTimeout(async () => {
+                    try {
+
+                        await this._broadcaster.makeVote(post)
+                        await this._database.writeVote(post)
+                    } catch(e) {
+                        console.log('err voting')
+                    }
                 }, index * 5 * 1000)
             })
         } catch(e) {
