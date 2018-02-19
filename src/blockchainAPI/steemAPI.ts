@@ -33,6 +33,27 @@ export class SteemAPI {
         })
     }
 
+
+    getPost(post: Post): Promise<Post> {
+        steem.api.setOptions({
+            url: 'wss://steemd-int.steemit.com'
+        });
+        return new Promise((resolve, reject) => {
+            steem.api.getContent(post.author, post.permlink, (err, result) => {
+                if (err) {
+                    reject({ err })
+                    // If there is no author it is invalid
+                } else if (!result.author) {
+                    reject({ err: 'No post found' })
+                } else {
+                    post.active_votes = result.active_votes
+                    post.payout = parseFloat(result.pending_payout_value.split(' ')[0])
+                    resolve(post)
+                }
+            })
+        })
+    }
+
     getWallet(user: User): Promise<Wallet> {
         return new Promise((resolve, reject) => {
             steem.api.getAccounts([user.username], (err, response) => {

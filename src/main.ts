@@ -5,7 +5,7 @@ import { SteemAPI } from './blockchainAPI/steemAPI';
 import { settings } from './settings';
 
 const local = {
-  host: '127.0.0.1',
+  host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: settings.communityName
@@ -21,15 +21,10 @@ const main = async () => {
   bot.setBroadcaster(new SteemBroadcaster())
   bot.setBlockchainAPI(new SteemAPI())
   await bot.setDatabase(new sqlDatabase(local))
-  // bot.scrape()
-
-
-  // every minute scrape, vote, and comment
-  setInterval(() => {
-    bot.scrape()
-    bot.vote()
-    bot.comment()
-  }, 1000 * 60)
+  // bot.stats()
+  bot.scrape()
+  bot.vote()
+  bot.comment()
 
 }
 
