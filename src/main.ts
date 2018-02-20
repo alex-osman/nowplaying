@@ -21,7 +21,6 @@ const main = async () => {
   bot.setBroadcaster(new SteemBroadcaster())
   bot.setBlockchainAPI(new SteemAPI())
   await bot.setDatabase(new sqlDatabase(local))
-  bot.postWeek()
   
   // bot.scrape()
 

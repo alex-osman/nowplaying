@@ -43,7 +43,7 @@ export class sqlDatabase {
     }
 
     async getPosts(): Promise < Post[] > {
-        const posts: Array < any > = await this._con.query('SELECT * FROM posts WHERE is_approved=1');
+        const posts: Array < any > = await this._con.query('SELECT * FROM posts');
         return posts.map(d => ({
             author: d.author,
             permlink: d.permlink,

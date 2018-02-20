@@ -1,4 +1,4 @@
-export class reportOptions {
+export class ReportOptions {
     week: number;
     payout: number;
     startWeek: Date;

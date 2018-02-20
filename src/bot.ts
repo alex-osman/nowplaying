@@ -1,15 +1,21 @@
+<<<<<<< HEAD
 import { reportStartWeek, reportRecap } from './reporter';
+=======
+import { reportStartWeek, playerStats } from './reporter';
+>>>>>>> 2bcf0fc08b8d4431406992fdafa12062aa97faef
 import { Broadcaster } from './broadcaster/broadcaster';
 import { Database } from './database/database'
 import { BlockchainAPI } from './blockchainAPI/blockchainAPI'
 import { User } from './classes/user';
 import { weekFilter } from './filters';
+import { Statistics } from './statistics';
 import { Post } from './classes/post';
 import { cleanScrape } from './functions';
 const ncp = require('copy-paste')
 
 const steem = require('steem')
 
+// this should be a singleton
 export class Bot {
     week: number;
     communityName: string; // nowplaying
@@ -48,9 +54,13 @@ export class Bot {
 
     async scrape(): Promise<any> {
         try {
-            const x = await this._blockchainAPI.getPosts(this.communityName)
-            const posts = await cleanScrape(x, this.users)
-            console.log(await this._database.writePosts(posts))
+            const weekPost = await this._blockchainAPI.getPost({ author: this.username, permlink: `nowplaying-week-${this.week}`} as Post)
+            const allPosts = await this._blockchainAPI.getPosts(this.communityName)
+            const posts = await cleanScrape(allPosts, weekPost)
+            const results = await this._database.writePosts(posts)
+            console.log('valid', posts.filter(p => p.is_approved).length)
+            console.log('invalid', posts.filter(p => !p.is_approved).length)
+            console.log(results)
         } catch(e) {
             console.log(e)
             console.log('got err')
@@ -60,13 +70,18 @@ export class Bot {
     async comment(): Promise<any> {
         try {
             const allPosts = await this._database.getPosts()
+            // Comment regardless of approved
             const toCommentPosts = allPosts.filter(post => !post.did_comment)
 
             // Comment on each one with 20 second breaks
             toCommentPosts.forEach((post, index) => {
-                setTimeout(() => {
-                    this._broadcaster.makeComment(post)
-                    this._database.writeComment(post)
+                setTimeout(async () => {
+                    try {
+                        await this._broadcaster.makeComment(post)
+                        await this._database.writeComment(post)
+                    } catch(e) {
+                        console.log('err commenting')
+                    }
                 }, index * 22 * 1000)
             })
         } catch(e) {
@@ -77,14 +92,20 @@ export class Bot {
     async vote(): Promise<any> {
         try {
             const allPosts = await this._database.getPosts()
-            const toVotePosts = allPosts.filter(post => !post.did_vote)
+            // Only vote on approved posts
+            const toVotePosts = allPosts.filter(post => !post.did_vote && post.is_approved)
 
-            // Comment on each one with 20 second breaks
+            // Vote on each one with 20 second breaks
             toVotePosts.forEach((post, index) => {
-                setTimeout(() => {
-                    this._broadcaster.makeVote(post)
-                    this._database.writeVote(post)
-                }, index * 22 * 1000)
+                setTimeout(async () => {
+                    try {
+
+                        await this._broadcaster.makeVote(post)
+                        await this._database.writeVote(post)
+                    } catch(e) {
+                        console.log('err voting')
+                    }
+                }, index * 5 * 1000)
             })
         } catch(e) {
             console.log('something went wrong', e)
@@ -132,5 +153,13 @@ export class Bot {
             console.log(e)
             console.log('got err')
         }
+    }
+
+    async stats() {
+        const statistics = Statistics.Instance()
+        statistics.posts = await this._database.getPosts()
+        statistics.users = await this._database.getUsers()
+
+        statistics.general()
     }
 }
