@@ -50,7 +50,8 @@ export class sqlDatabase {
             votes: d.votes,
             created: d.created,
             did_comment: d.did_comment,
-            did_vote: d.did_vote
+            did_vote: d.did_vote,
+            is_approved: d.is_approved,
         }) as Post)
     }
 
