@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import { reportStartWeek, reportRecap } from './reporter';
-=======
-import { reportStartWeek, playerStats } from './reporter';
->>>>>>> 2bcf0fc08b8d4431406992fdafa12062aa97faef
 import { Broadcaster } from './broadcaster/broadcaster';
 import { Database } from './database/database'
 import { BlockchainAPI } from './blockchainAPI/blockchainAPI'
@@ -54,7 +50,8 @@ export class Bot {
 
     async scrape(): Promise<any> {
         try {
-            const weekPost = await this._blockchainAPI.getPost({ author: this.username, permlink: `nowplaying-week-${this.week}`} as Post)
+	    const permlink = 's4k49-now-playing-week-7-feb-11-feb-17'
+            const weekPost = await this._blockchainAPI.getPost({ author: this.username, permlink } as Post)
             const allPosts = await this._blockchainAPI.getPosts(this.communityName)
             const posts = await cleanScrape(allPosts, weekPost)
             const results = await this._database.writePosts(posts)
@@ -92,8 +89,10 @@ export class Bot {
     async vote(): Promise<any> {
         try {
             const allPosts = await this._database.getPosts()
+	    console.log(allPosts.map(p => ({a: p.author, b: p.did_vote })))
             // Only vote on approved posts
             const toVotePosts = allPosts.filter(post => !post.did_vote && post.is_approved)
+	    console.log('vote on ', toVotePosts.map(p => p.author))
 
             // Vote on each one with 20 second breaks
             toVotePosts.forEach((post, index) => {
