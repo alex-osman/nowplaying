@@ -12,7 +12,7 @@ const local = {
 };
 
 const main = async () => {
-  const TIME = 1000 * 60// * 30
+  const TIME = 1000 * 60 * 30
   const bot = new Bot()
   bot.communityName = settings.communityName
   bot.week = settings.week
@@ -23,7 +23,7 @@ const main = async () => {
   await bot.setDatabase(new sqlDatabase(local))
 
   // every minute scrape, vote, and comment
-  setInterval(() => { console.log('wut'); bot.scrape(); }, TIME)
+  setInterval(() => { bot.scrape(); }, TIME)
   
   bot.scrape()
 }
