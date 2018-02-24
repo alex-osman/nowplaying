@@ -6,7 +6,8 @@ import { User } from './classes/user';
 import { weekFilter } from './filters';
 import { Statistics } from './statistics';
 import { Post } from './classes/post';
-import { cleanScrape } from './functions';
+const dateformat = require('dateformat')
+
 const ncp = require('copy-paste')
 
 const steem = require('steem')
@@ -49,19 +50,35 @@ export class Bot {
     }
 
     async scrape(): Promise<any> {
+        console.log(`[${dateformat(new Date(), 'mmmm dS, h:MM:ss TT')}]`)
+        console.log(`[Start Scraping]`)
         try {
-	    const permlink = 's4k49-now-playing-week-7-feb-11-feb-17'
-            const weekPost = await this._blockchainAPI.getPost({ author: this.username, permlink } as Post)
             const allPosts = await this._blockchainAPI.getPosts(this.communityName)
-            const posts = await cleanScrape(allPosts, weekPost)
-            const results = await this._database.writePosts(posts)
-            console.log('valid', posts.filter(p => p.is_approved).length)
-            console.log('invalid', posts.filter(p => !p.is_approved).length)
-            console.log(results)
+            const results = await this._database.writePosts(allPosts)
+            console.log(`- created: ${results.created}\n- updated: ${results.updated}`)
+            await this.approve()
+            await this.comment()
+            await this.vote()
+            
         } catch(e) {
             console.log(e)
             console.log('got err')
         }
+        console.log('[End Scraping]')
+    }
+
+    async approve(): Promise<any> {
+        const allPosts = await this._database.getPosts()
+        const unapproved = allPosts.filter(post => !post.is_approved)
+
+        const permlink = 's4k49-now-playing-week-7-feb-11-feb-17'
+        const weekPost = await this._blockchainAPI.getPost({ author: this.username, permlink } as Post)
+        const voters = weekPost.active_votes.map(vote => vote.voter)
+        const toApprove = unapproved.filter(post => voters.includes(post.author))
+        console.log('- approving', toApprove)
+        this._database.approve(toApprove)
+
+
     }
 
     async comment(): Promise<any> {
@@ -69,6 +86,7 @@ export class Bot {
             const allPosts = await this._database.getPosts()
             // Comment regardless of approved
             const toCommentPosts = allPosts.filter(post => !post.did_comment)
+            console.log('- commenting on', toCommentPosts)
 
             // Comment on each one with 20 second breaks
             toCommentPosts.forEach((post, index) => {
@@ -89,16 +107,14 @@ export class Bot {
     async vote(): Promise<any> {
         try {
             const allPosts = await this._database.getPosts()
-	    console.log(allPosts.map(p => ({a: p.author, b: p.did_vote })))
             // Only vote on approved posts
             const toVotePosts = allPosts.filter(post => !post.did_vote && post.is_approved)
-	    console.log('vote on ', toVotePosts.map(p => p.author))
+            console.log('- voting on', toVotePosts)
 
-            // Vote on each one with 20 second breaks
+            // Vote on each one with 5 second breaks
             toVotePosts.forEach((post, index) => {
                 setTimeout(async () => {
                     try {
-
                         await this._broadcaster.makeVote(post)
                         await this._database.writeVote(post)
                     } catch(e) {

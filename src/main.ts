@@ -10,10 +10,9 @@ const local = {
   password: process.env.DB_PASS,
   database: settings.communityName
 };
-console.log(local)
 
 const main = async () => {
-  const MINUTES = 30
+  const TIME = 1000 * 60 * 30
   const bot = new Bot()
   bot.communityName = settings.communityName
   bot.week = settings.week
@@ -24,15 +23,9 @@ const main = async () => {
   await bot.setDatabase(new sqlDatabase(local))
 
   // every minute scrape, vote, and comment
-  setInterval(() => {
-    bot.scrape()
-    bot.vote()
-    bot.comment()
-  }, 1000 * 60 * MINUTES)
+  setInterval(() => { bot.scrape(); }, TIME)
   
   bot.scrape()
-  bot.vote()
-  bot.comment()
 }
 
 main()
