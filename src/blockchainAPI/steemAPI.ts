@@ -11,7 +11,6 @@ export class SteemAPI {
                 "tag": tag,
                 "limit": 30
             }, (err, result) => {
-                console.log('scraping...', result.length)
                 if (err) {
                     reject(err)
                 } else {

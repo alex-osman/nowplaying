@@ -6,7 +6,8 @@ import { User } from './classes/user';
 import { weekFilter } from './filters';
 import { Statistics } from './statistics';
 import { Post } from './classes/post';
-import { cleanScrape } from './functions';
+const dateformat = require('dateformat')
+
 const ncp = require('copy-paste')
 
 const steem = require('steem')
@@ -49,18 +50,21 @@ export class Bot {
     }
 
     async scrape(): Promise<any> {
+        console.log(`[${dateformat(new Date(), 'mmmm dS, h:MM:ss TT')}]`)
+        console.log(`[Start Scraping]`)
         try {
             const allPosts = await this._blockchainAPI.getPosts(this.communityName)
             const results = await this._database.writePosts(allPosts)
+            console.log(`- created: ${results.created}\n- updated: ${results.updated}`)
             await this.approve()
             await this.comment()
             await this.vote()
             
-            console.log(results)
         } catch(e) {
             console.log(e)
             console.log('got err')
         }
+        console.log('[End Scraping]')
     }
 
     async approve(): Promise<any> {
@@ -71,7 +75,7 @@ export class Bot {
         const weekPost = await this._blockchainAPI.getPost({ author: this.username, permlink } as Post)
         const voters = weekPost.active_votes.map(vote => vote.voter)
         const toApprove = unapproved.filter(post => voters.includes(post.author))
-        console.log('approving', toApprove)
+        console.log('- approving', toApprove)
         this._database.approve(toApprove)
 
 
@@ -82,6 +86,7 @@ export class Bot {
             const allPosts = await this._database.getPosts()
             // Comment regardless of approved
             const toCommentPosts = allPosts.filter(post => !post.did_comment)
+            console.log('- commenting on', toCommentPosts)
 
             // Comment on each one with 20 second breaks
             toCommentPosts.forEach((post, index) => {
@@ -104,7 +109,7 @@ export class Bot {
             const allPosts = await this._database.getPosts()
             // Only vote on approved posts
             const toVotePosts = allPosts.filter(post => !post.did_vote && post.is_approved)
-            console.log('voting on', toVotePosts)
+            console.log('- voting on', toVotePosts)
 
             // Vote on each one with 5 second breaks
             toVotePosts.forEach((post, index) => {

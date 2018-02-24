@@ -10,10 +10,9 @@ const local = {
   password: process.env.DB_PASS,
   database: settings.communityName
 };
-console.log(local)
 
 const main = async () => {
-  const TIME = 1000 * 60 * 30
+  const TIME = 1000 * 60// * 30
   const bot = new Bot()
   bot.communityName = settings.communityName
   bot.week = settings.week
