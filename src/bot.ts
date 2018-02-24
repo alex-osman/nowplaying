@@ -50,18 +50,31 @@ export class Bot {
 
     async scrape(): Promise<any> {
         try {
-	    const permlink = 's4k49-now-playing-week-7-feb-11-feb-17'
-            const weekPost = await this._blockchainAPI.getPost({ author: this.username, permlink } as Post)
             const allPosts = await this._blockchainAPI.getPosts(this.communityName)
-            const posts = await cleanScrape(allPosts, weekPost)
-            const results = await this._database.writePosts(posts)
-            console.log('valid', posts.filter(p => p.is_approved).length)
-            console.log('invalid', posts.filter(p => !p.is_approved).length)
+            const results = await this._database.writePosts(allPosts)
+            await this.approve()
+            await this.comment()
+            await this.vote()
+            
             console.log(results)
         } catch(e) {
             console.log(e)
             console.log('got err')
         }
+    }
+
+    async approve(): Promise<any> {
+        const allPosts = await this._database.getPosts()
+        const unapproved = allPosts.filter(post => !post.is_approved)
+
+        const permlink = 's4k49-now-playing-week-7-feb-11-feb-17'
+        const weekPost = await this._blockchainAPI.getPost({ author: this.username, permlink } as Post)
+        const voters = weekPost.active_votes.map(vote => vote.voter)
+        const toApprove = unapproved.filter(post => voters.includes(post.author))
+        console.log('approving', toApprove)
+        this._database.approve(toApprove)
+
+
     }
 
     async comment(): Promise<any> {
@@ -89,16 +102,14 @@ export class Bot {
     async vote(): Promise<any> {
         try {
             const allPosts = await this._database.getPosts()
-	    console.log(allPosts.map(p => ({a: p.author, b: p.did_vote })))
             // Only vote on approved posts
             const toVotePosts = allPosts.filter(post => !post.did_vote && post.is_approved)
-	    console.log('vote on ', toVotePosts.map(p => p.author))
+            console.log('voting on', toVotePosts)
 
-            // Vote on each one with 20 second breaks
+            // Vote on each one with 5 second breaks
             toVotePosts.forEach((post, index) => {
                 setTimeout(async () => {
                     try {
-
                         await this._broadcaster.makeVote(post)
                         await this._database.writeVote(post)
                     } catch(e) {

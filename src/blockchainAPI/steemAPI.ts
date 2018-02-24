@@ -5,19 +5,17 @@ const steem = require('steem')
 
 export class SteemAPI {
     getPosts(tag): Promise<Post[]> {
-        steem.api.setOptions({
-            url: 'wss://steemd-int.steemit.com'
-        });
+        steem.api.setOptions({ url: 'https://api.steemit.com'});
         return new Promise((resolve, reject) => {
             steem.api.getDiscussionsByCreated({
                 "tag": tag,
-                "limit": 100
+                "limit": 30
             }, (err, result) => {
+                console.log('scraping...', result.length)
                 if (err) {
                     reject(err)
                 } else {
                     resolve(result
-                        // .filter(x => x.category === tag)
                         .map(post => ({
                             author: post.author,
                             permlink: post.permlink,

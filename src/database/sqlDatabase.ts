@@ -87,15 +87,24 @@ export class sqlDatabase {
         }
     }
 
+    async approve(posts: Post[]): Promise<any> {
+        if (!posts.length) {
+            return
+        }
+        const result = await this._con.query('UPDATE posts SET is_approved=1 WHERE author IN (?) AND permlink IN (?)', [posts.map(post => post.author), posts.map(post => post.permlink)])
+        // console.log(result)
+        return result
+    }
+
     async writeComment(post: Post): Promise<any> {
         const result = await this._con.query('UPDATE posts SET did_comment=1 WHERE author=? AND permlink=?', [post.author, post.permlink])
-        console.log(result)
-        return new Promise(resolve => resolve('hello'))
+        // console.log(result)
+        return result
     }
     
     async writeVote(post: Post): Promise<any> {
         const result = await this._con.query('UPDATE posts SET did_vote=1 WHERE author=? AND permlink=?', [post.author, post.permlink])
-        console.log(result)
-        return new Promise(resolve => resolve('hello'))
+        // console.log(result)
+        return result
     }
 }
