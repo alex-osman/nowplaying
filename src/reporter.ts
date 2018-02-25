@@ -1,16 +1,32 @@
+import { getWeek } from './functions';
+import { Post } from './classes/post';
 import { User } from './classes/user';
 import { weekFilter } from './filters';
 
 const dateformat = require('dateformat')
 import { Report } from './classes/report'
 import { settings } from './settings';
-import { weekFilter } from './filters';
 
-const getRankings = (report: Report): string[] => report.users
-    .map(user => Object.assign({}, user, { totalVotes: user.posts.map(post => post.votes).reduce((totalVotes, votes) => totalVotes + votes, 0) }))
-    .sort((a, b) => b.posts.length - a.posts.length || b.totalVotes - a.totalVotes)
-    .reduce((str, user, index) => str.concat({ text: `${index + 1} | ${user.posts.length > report.reportOptions.week ? report.reportOptions.week : user.posts.length} | ${user.posts.reduce((prev, cur) => prev + cur.votes, 0)}\n`, author: user.username }), [])
-    // .reduce((str, user, index) => str.concat(`${index + 1} | @${user.username} | ${user.posts.length > report.reportOptions.week ? report.reportOptions.week : user.posts.length} | ${user.posts.reduce((prev, cur) => prev + cur.votes, 0)}\n`), [])
+const getNumWeeks = (posts: Post[]): number => posts
+    // Map each post to its week #
+    .map(post => getWeek(new Date(post.created)))
+    // Remove duplicates
+    .filter((num, index, arr) => index === arr.indexOf(num))
+    // Return number of weeks
+    .length
+
+const getNumVotes = (posts: Post[]): number => posts.map(p => p.is_approved ? p.votes : 0).reduce((prev, curr) => prev + curr, 0)
+
+const getRankings = (report: Report): string => report.users
+    .map(user => ({
+        username: user.username,
+        weeks: getNumWeeks(user.posts),
+        votes: getNumVotes(user.posts)
+    }))
+    // Sort by weeks, then votes
+    .sort((a, b) => b.weeks - a.weeks || b.votes - a.votes)
+    // Reduce into one large string
+    .reduce((str, user, index) => `${str}\n${index+1} | ${user.username} | ${user.weeks} | ${user.votes}`, '')
 
 export const playerStats = (users: User[], username: string) => getRankings({ users, reportOptions: { week: 5}} as Report).find(x => x.author === username).text
     // getRankings({users, reportOptions: {week: 5}} as Report).find(str => str.includes(`@${username}`))
@@ -64,7 +80,7 @@ const payout = (report: Report): Report => {
 }
 
 const contestants = (report: Report): Report => {
-    report.post.body = `${report.post.body}\n${center(`${report.users.reduce((str, user, index) => `${str}[${user.username}](steemit.com/nowplaying/@${user.username}/${user.posts[0].permlink})${index === report.users.length-1 ? '!' : ', '}`, '')}`)}`
+    report.post.body = `${report.post.body}\n${center(`${report.users.reduce((str, user, index) => `${str}[${user.username}](steemit.com/nowplaying/@${user.username}/${user.posts[user.posts.length - 1].permlink})${index === report.users.length-1 ? '!' : ', '}`, '')}`)}`
     return report
 }
 
