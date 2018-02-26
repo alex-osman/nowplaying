@@ -19,7 +19,7 @@ const getNumVotes = (posts: Post[]): number => posts.map(p => p.is_approved ? p.
 
 const getRankings = (report: Report): string => report.users
     .map(user => ({
-        username: user.username,
+        username: `@${user.username}`,
         weeks: getNumWeeks(user.posts),
         votes: getNumVotes(user.posts)
     }))
