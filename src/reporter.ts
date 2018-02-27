@@ -1,16 +1,32 @@
+import { getWeek } from './functions';
+import { Post } from './classes/post';
 import { User } from './classes/user';
 import { weekFilter } from './filters';
 
 const dateformat = require('dateformat')
 import { Report } from './classes/report'
 import { settings } from './settings';
-import { weekFilter } from './filters';
 
-const getRankings = (report: Report): string[] => report.users
-    .map(user => Object.assign({}, user, { totalVotes: user.posts.map(post => post.votes).reduce((totalVotes, votes) => totalVotes + votes, 0) }))
-    .sort((a, b) => b.posts.length - a.posts.length || b.totalVotes - a.totalVotes)
-    .reduce((str, user, index) => str.concat({ text: `${index + 1} | ${user.posts.length > report.reportOptions.week ? report.reportOptions.week : user.posts.length} | ${user.posts.reduce((prev, cur) => prev + cur.votes, 0)}\n`, author: user.username }), [])
-    // .reduce((str, user, index) => str.concat(`${index + 1} | @${user.username} | ${user.posts.length > report.reportOptions.week ? report.reportOptions.week : user.posts.length} | ${user.posts.reduce((prev, cur) => prev + cur.votes, 0)}\n`), [])
+const getNumWeeks = (posts: Post[]): number => posts
+    // Map each post to its week #
+    .map(post => getWeek(new Date(post.created)))
+    // Remove duplicates
+    .filter((num, index, arr) => index === arr.indexOf(num))
+    // Return number of weeks
+    .length
+
+const getNumVotes = (posts: Post[]): number => posts.map(p => p.is_approved ? p.votes : 0).reduce((prev, curr) => prev + curr, 0)
+
+const getRankings = (report: Report): string => report.users
+    .map(user => ({
+        username: `@${user.username}`,
+        weeks: getNumWeeks(user.posts),
+        votes: getNumVotes(user.posts)
+    }))
+    // Sort by weeks, then votes
+    .sort((a, b) => b.weeks - a.weeks || b.votes - a.votes)
+    // Reduce into one large string
+    .reduce((str, user, index) => `${str}\n${index+1} | ${user.username} | ${user.weeks} | ${user.votes}`, '')
 
 export const playerStats = (users: User[], username: string) => getRankings({ users, reportOptions: { week: 5}} as Report).find(x => x.author === username).text
     // getRankings({users, reportOptions: {week: 5}} as Report).find(str => str.includes(`@${username}`))
@@ -59,12 +75,14 @@ const spotify = (report: Report): Report => {
 }
 
 const payout = (report: Report): Report => {
-    report.post.body = `${report.post.body}\n ${center(`Week ${report.reportOptions.week} Contestants`)}\n${center(`We had a total payout of about ${report.reportOptions.payout} STEEM, which will be powered up to all ${report.users.length} contestants.  That's about ${parseInt(String(report.reportOptions.payout / report.users.length * 1000)) / 1000} SP per person!`)}`
+    const users = report.users.filter(weekFilter(settings.week))
+    report.post.body = `${report.post.body}\n ${center(`Week ${report.reportOptions.week} Contestants`)}\n${center(`We had a total payout of about ${report.reportOptions.payout} STEEM, which will be powered up to all ${users.length} contestants.  That's about ${parseInt(String(report.reportOptions.payout / users.length * 1000)) / 1000} SP per person!`)}`
     return report
 }
 
 const contestants = (report: Report): Report => {
-    report.post.body = `${report.post.body}\n${center(`${report.users.reduce((str, user, index) => `${str}[${user.username}](steemit.com/nowplaying/@${user.username}/${user.posts[0].permlink})${index === report.users.length-1 ? '!' : ', '}`, '')}`)}`
+    const users = report.users.filter(weekFilter(settings.week))
+    report.post.body = `${report.post.body}\n${center(`${users.reduce((str, user, index) => `${str}[${user.username}](steemit.com/nowplaying/@${user.username}/${user.posts[user.posts.length - 1].permlink})${index === users.length-1 ? '!' : ', '}`, '')}`)}`
     return report
 }
 
@@ -80,8 +98,8 @@ export const reportRecap = (_users) => {
     report.reportOptions.startWeek = new Date(2018, 0, (report.reportOptions.week - 1) * 7)
     report.reportOptions.endWeek = new Date(2018, 0, (report.reportOptions.week) * 7 - 1)
     report.reportOptions.payout = settings.payout
-    report.reportOptions.spotifyLink = 'https://open.spotify.com/user/1240132288/playlist/7iEkynp0s0MWqbcpLh6zjj'
-    report.reportOptions.spotifyImg = 'https://steemitimages.com/DQmYFnWjYgyagcjKY37S6dVSSkeutHmUVNvgFWRnDBrpdb1/image.png'
+    report.reportOptions.spotifyLink = 'https://open.spotify.com/user/1240132288/playlist/17uu5RLiigAv9sdqowWeSX'
+    report.reportOptions.spotifyImg = 'https://steemitimages.com/DQmSjkZSDVmVWMHW9XXEVS5j54fxZ6z8pzh1QrGxvU5qseo/image.png'
 
     report.users = _users.filter(user => user.username != 'nowplaying-music')//.filter(weekFilter(report.reportOptions.week))
     report.post.author = settings.username
@@ -90,7 +108,6 @@ export const reportRecap = (_users) => {
     report.post.jsonMetadata.app = settings.communityName
     report.post.jsonMetadata.tags = settings.tags
     report.post.title = `Spotify Playlist: Week ${report.reportOptions.week} (${dateformat(report.reportOptions.startWeek, 'mmm d')} - ${dateformat(report.reportOptions.endWeek, 'mmm d')})`
-    report.users = report.users.filter(weekFilter(settings.week))
     return leaderboard(contestants(payout(spotify(subtitle(endTitle(report))))))
 }
 

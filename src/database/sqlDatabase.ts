@@ -1,3 +1,4 @@
+import { settings } from './../settings';
 import { User } from '../classes/user';
 import { Post } from '../classes/post';
 
@@ -27,7 +28,7 @@ export class sqlDatabase {
                 did_vote: data.did_vote,
                 is_approved: data.is_approved
             }) as Post)
-            .filter((post) => post.author != 'loubega')
+            .filter(post => !settings.blacklist.includes(post.author))
             .reduce((users: User[], post) => {
                 const user = users.find(user => user.username === post.author)
                 if (user) {
@@ -53,6 +54,7 @@ export class sqlDatabase {
             did_vote: d.did_vote,
             is_approved: d.is_approved,
         }) as Post)
+        .filter(post => !settings.blacklist.includes(post.author))
     }
 
     async writePosts(posts: Post[]): Promise<any> {

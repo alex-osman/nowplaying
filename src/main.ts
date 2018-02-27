@@ -21,11 +21,11 @@ const main = async () => {
   bot.setBroadcaster(new SteemBroadcaster())
   bot.setBlockchainAPI(new SteemAPI())
   await bot.setDatabase(new sqlDatabase(local))
-
+  bot.postWeek()
   // every minute scrape, vote, and comment
-  setInterval(() => { bot.scrape(); }, TIME)
+  // setInterval(() => { bot.scrape(); }, TIME)
   
-  bot.scrape()
+  // bot.scrape()
 }
 
 main()

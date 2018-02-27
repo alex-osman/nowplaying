@@ -2,11 +2,4 @@ import { Post } from './classes/post';
 import { User } from './classes/user';
 import { settings } from './settings'
 
-export const cleanScrape = (allPosts: Post[], weekPost: Post): Post[] => allPosts
-    .filter(post => !settings.blacklist.includes(post.author))
-    .map(post => {
-        if (weekPost.active_votes.find(vote => vote.voter === post.author)) {
-            post.is_approved = true
-        }
-        return post
-    })
+export const getWeek = (date: Date) => Math.ceil((((date.getTime() - new Date(2018, 0, 1).getTime()) / 86400000) + 1) / 7)
