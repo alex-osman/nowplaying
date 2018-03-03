@@ -24,6 +24,7 @@ export class sqlDatabase {
                 votes: data.votes,
                 created: data.created,
                 permlink: data.permlink,
+                tag: data.tag,
                 did_comment: data.did_comment,
                 did_vote: data.did_vote,
                 is_approved: data.is_approved
@@ -48,6 +49,7 @@ export class sqlDatabase {
         return posts.map(d => ({
             author: d.author,
             permlink: d.permlink,
+            tag: d.tag,
             votes: d.votes,
             created: d.created,
             did_comment: d.did_comment,
@@ -66,6 +68,7 @@ export class sqlDatabase {
                 try {
                     result = await this._con.query('INSERT INTO posts SET ?', [post])
                 } catch (e) {
+                    // Integrity error - this post already exists
                     // console.log('error inserting prolly cause im there already')
                 }
                 return {

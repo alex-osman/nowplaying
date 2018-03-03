@@ -4,6 +4,7 @@ export class Post {
     // STEEM
     author: string;
     permlink: string;
+    tag: string;
     created: string;
     title: string;
     body: string;

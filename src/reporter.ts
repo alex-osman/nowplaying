@@ -1,6 +1,5 @@
 import { getWeek } from './functions';
 import { Post } from './classes/post';
-import { User } from './classes/user';
 import { weekFilter } from './filters';
 
 const dateformat = require('dateformat')
@@ -28,7 +27,7 @@ const getRankings = (report: Report): string => report.users
     // Reduce into one large string
     .reduce((str, user, index) => `${str}\n${index+1} | ${user.username} | ${user.weeks} | ${user.votes}`, '')
 
-export const playerStats = (users: User[], username: string) => getRankings({ users, reportOptions: { week: 5}} as Report).find(x => x.author === username).text
+// export const playerStats = (users: User[], username: string) => getRankings({ users, reportOptions: { week: 5}} as Report).find(x => x.author === username).text
     // getRankings({users, reportOptions: {week: 5}} as Report).find(str => str.includes(`@${username}`))
 
 const center = (str: string) => `<center>${str}</center>`

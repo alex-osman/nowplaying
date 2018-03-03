@@ -2,7 +2,7 @@ export const settings = {
     communityName: 'nowplaying',
     username: process.env.STEEM_USERNAME,
     password: process.env.STEEM_PASSWORD,
-    week: Math.ceil((((new Date() - new Date(2018, 0, 1)) / 86400000) ) / 7),
+    week: Math.ceil(((((new Date() as any) - (new Date(2018, 0, 1) as any)) / 86400000) ) / 7),
     payout: 0.580,
     tags: ['nowplaying', 'music', 'contest', 'share', 'spotify'],
     blacklist: [
