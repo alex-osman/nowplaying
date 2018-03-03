@@ -1,8 +1,10 @@
-import { Bot } from './bot';
-import { SteemBroadcaster } from './broadcaster/steemBroadcaster';
-import { sqlDatabase } from './database/sqlDatabase';
-import { SteemAPI } from './blockchainAPI/steemAPI';
-import { settings } from './settings';
+// initializes the bot to run the process
+
+import { Bot } from '../bot';
+import { SteemBroadcaster } from '../broadcaster/steemBroadcaster';
+import { sqlDatabase } from '../database/sqlDatabase';
+import { SteemAPI } from '../blockchainAPI/steemAPI';
+import { settings } from '../settings';
 
 const local = {
   host: process.env.DB_HOST,
@@ -11,8 +13,7 @@ const local = {
   database: settings.communityName
 };
 
-const main = async () => {
-  // const TIME = 1000 * 60 * 30
+export const init = async () => {
   const bot = new Bot()
   bot.communityName = settings.communityName
   bot.week = settings.week
@@ -21,11 +22,5 @@ const main = async () => {
   bot.setBroadcaster(new SteemBroadcaster())
   bot.setBlockchainAPI(new SteemAPI())
   await bot.setDatabase(new sqlDatabase(local))
-  bot.postWeek()
-  // every minute scrape, vote, and comment
-  // setInterval(() => { bot.scrape(); }, TIME)
-  
-  // bot.scrape()
+  return bot
 }
-
-main()

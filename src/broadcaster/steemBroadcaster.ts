@@ -1,6 +1,4 @@
 import { Post } from '../classes/post';
-import { Wallet } from '../classes/wallet';
-import { sqlDatabase } from '../database/sqlDatabase';
 
 const steem = require('steem')
 export class SteemBroadcaster {

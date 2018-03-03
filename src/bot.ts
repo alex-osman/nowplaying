@@ -6,9 +6,8 @@ import { User } from './classes/user';
 import { weekFilter } from './filters';
 import { Statistics } from './statistics';
 import { Post } from './classes/post';
+import { Report } from './classes/report';
 const dateformat = require('dateformat')
-
-const ncp = require('copy-paste')
 
 const steem = require('steem')
 
@@ -71,7 +70,7 @@ export class Bot {
         const allPosts = await this._database.getPosts()
         const unapproved = allPosts.filter(post => !post.is_approved)
 
-        const permlink = 's4k49-now-playing-week-7-feb-11-feb-17'
+        const permlink = `${this.communityName}-week-${this.week}`
         const weekPost = await this._blockchainAPI.getPost({ author: this.username, permlink } as Post)
         const voters = weekPost.active_votes.map(vote => vote.voter)
         const toApprove = unapproved.filter(post => voters.includes(post.author))
@@ -85,7 +84,7 @@ export class Bot {
         try {
             const allPosts = await this._database.getPosts()
             // Comment regardless of approved
-            const toCommentPosts = allPosts.filter(post => !post.did_comment)
+            const toCommentPosts = allPosts.filter(post => !post.did_comment && post.is_approved)
             console.log('- commenting on', toCommentPosts)
 
             // Comment on each one with 20 second breaks
@@ -154,19 +153,27 @@ export class Bot {
 
     }
 
-    async postWeek(): Promise<any> {
+    async postWeek(): Promise<Report> {
         try {
             const users = await this._database.getUsers()
-            // const report = await reportStartWeek(users)
-            const report = await reportRecap(users)
-            console.log(report.post.body)
-            ncp.copy(report.post.title, () => console.log('Copied to clipboard'))
-            // const post = await this._broadcaster.makePost(report.post)
-
-            // console.log(post)
+            const report = await reportStartWeek(users)
+            return report
         } catch(e) {
             console.log(e)
             console.log('got err')
+            return null
+        }
+    }
+
+    async postRecap(): Promise<Report> {
+        try {
+            const users = await this._database.getUsers()
+            const report = await reportRecap(users)
+            return report
+        } catch(e) {
+            console.log(e)
+            console.log('got err')
+            return null
         }
     }
 
