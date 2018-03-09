@@ -23,6 +23,6 @@ _*I hope to soon introduce a bot similar to @photocontests that will gamify the 
 - You may post as many #nowplaying posts as you want
 
 ### What are you listening to!
-Let me and your fellow steemians know what you are listening to in the comments or by making your very own #nowplaying post!  Check out the current week [here](https://steemit.com/nowplaying/@nowplaying-music/now-playing-week-3)!
+Let me and your fellow steemians know what you are listening to in the comments or by making your very own #nowplaying post!  Check out the current week [here](https://steemit.com/nowplaying/@nowplaying-music/now-playing-week-10)!
 
 Cheers!
