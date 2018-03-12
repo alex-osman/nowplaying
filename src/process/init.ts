@@ -7,7 +7,8 @@ import { SteemAPI } from '../blockchainAPI/steemAPI';
 import { settings } from '../settings';
 
 const local = {
-  host: process.env.DB_HOST,
+  // host: process.env.DB_HOST,
+  host: '216.15.29.240',
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: settings.communityName
