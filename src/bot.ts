@@ -129,7 +129,6 @@ export class Bot {
     async payout(totalPayout: number): Promise<any> {
         const allUsers = await this._database.getUsers()
         const weekUsers = allUsers.filter(weekFilter(this.week))
-
         const wallet = await this._blockchainAPI.getWallet({ username: this.username } as User)
         wallet.setActive(this.getActiveWif())
 

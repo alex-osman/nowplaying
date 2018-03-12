@@ -9,7 +9,7 @@ export class SteemAPI {
         return new Promise((resolve, reject) => {
             steem.api.getDiscussionsByCreated({
                 "tag": tag,
-                "limit": 30
+                "limit": 15
             }, (err, result) => {
                 if (err) {
                     reject(err)
@@ -18,8 +18,8 @@ export class SteemAPI {
                         .map(post => ({
                             author: post.author,
                             permlink: post.permlink,
-                            tag: post.category,
-                            created: post.created,
+                            tag: post.category.replace(/\W/g, ''),
+                            created: new Date(2018, 3, 9),
                             votes: post.active_votes.length,
                             did_comment: false,
                             did_vote: false,
