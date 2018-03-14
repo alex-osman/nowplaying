@@ -77,20 +77,20 @@ export class Spotify {
 
 
 
-        // const songs = playlists
-        //     .reduce((songs, playlist) => songs.concat(playlist.tracks.map(track => track.artists[0])), [])
-            // .reduce((obj, song) => {
-            //     if (obj[song]) {
-            //         obj[song] += 1
-            //     } else {
-            //         obj[song] = 1
-            //     }
-            //     return obj
-            // }, {})
-            // .sort((a, b) => a > b ? 1 : -1)
-        // console.log(songs)
+        const songs = playlists
+            .reduce((songs, playlist) => songs.concat(playlist.tracks.map(track => track.artists[0])), [])
+            .reduce((obj, song) => {
+                if (obj[song]) {
+                    obj[song] += 1
+                } else {
+                    obj[song] = 1
+                }
+                return obj
+            }, {})
+            .sort((a, b) => a > b ? 1 : -1)
+        console.log(songs)
         
-        // const playlist_songs = playlists.map(playlist => playlist.tracks.map(track => track.toString()))
-        // console.log(playlist_songs)
+        const playlist_songs = playlists.map(playlist => playlist.tracks.map(track => track.toString()))
+        console.log(playlist_songs)
     }
 }
