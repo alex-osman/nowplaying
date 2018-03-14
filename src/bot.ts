@@ -7,6 +7,7 @@ import { weekFilter } from './filters';
 import { Statistics } from './statistics';
 import { Post } from './classes/post';
 import { Report } from './classes/report';
+import { Spotify } from './process/spotify';
 const dateformat = require('dateformat')
 
 const steem = require('steem')
@@ -182,5 +183,26 @@ export class Bot {
         statistics.users = await this._database.getUsers()
 
         statistics.general()
+    }
+
+    async spotify() {
+        const spotify = Spotify.Instance()
+        const playlists = await spotify.getPlaylists()
+        playlists.forEach(playlist => {
+            playlist.tracks.forEach(async track => {
+                try {
+                    await this._database.writeTrack(track)
+                } catch(e) {
+                    console.log(`couldn't write track ${track.name} due to ${e}`)
+                    console.warn(e)
+                }
+            })
+        })
+        console.log(playlists)
+        let track = playlists[0].tracks[0]
+        this._database.writeTrack(track)
+        track = playlists[0].tracks[1]
+        this._database.writeTrack(track)
+
     }
 }
