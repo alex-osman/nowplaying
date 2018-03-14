@@ -7,6 +7,7 @@ import { weekFilter } from './filters';
 import { Statistics } from './statistics';
 import { Post } from './classes/post';
 import { Report } from './classes/report';
+import { Spotify } from './process/spotify';
 const dateformat = require('dateformat')
 
 const steem = require('steem')
@@ -129,7 +130,6 @@ export class Bot {
     async payout(totalPayout: number): Promise<any> {
         const allUsers = await this._database.getUsers()
         const weekUsers = allUsers.filter(weekFilter(this.week))
-
         const wallet = await this._blockchainAPI.getWallet({ username: this.username } as User)
         wallet.setActive(this.getActiveWif())
 
@@ -183,5 +183,20 @@ export class Bot {
         statistics.users = await this._database.getUsers()
 
         statistics.general()
+    }
+
+    async spotify() {
+        const spotify = Spotify.Instance()
+        const playlists = await spotify.getPlaylists()
+        playlists.forEach(playlist => {
+            playlist.tracks.forEach(async track => {
+                try {
+                    await this._database.writeTrack(track)
+                } catch(e) {
+                    console.log(`couldn't write track ${track.name} due to ${e}`)
+                    console.warn(e)
+                }
+            })
+        })
     }
 }

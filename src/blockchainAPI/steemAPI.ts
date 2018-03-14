@@ -18,7 +18,7 @@ export class SteemAPI {
                         .map(post => ({
                             author: post.author,
                             permlink: post.permlink,
-                            tag: post.category,
+                            tag: post.category.replace(/\W/g, ''),
                             created: post.created,
                             votes: post.active_votes.length,
                             did_comment: false,

@@ -1,6 +1,7 @@
 import { settings } from './../settings';
 import { User } from '../classes/user';
 import { Post } from '../classes/post';
+import { Track } from '../classes/track';
 
 const mysql = require('promise-mysql')
 
@@ -110,6 +111,12 @@ export class sqlDatabase {
     async writeVote(post: Post): Promise<any> {
         const result = await this._con.query('UPDATE posts SET did_vote=1 WHERE author=? AND permlink=?', [post.author, post.permlink])
         // console.log(result)
+        return result
+    }
+
+    async writeTrack(track: Track): Promise<any> {
+        const result = await this._con.query('INSERT INTO tracks SET ?', [track])
+        console.log(result)
         return result
     }
 }
