@@ -198,11 +198,5 @@ export class Bot {
                 }
             })
         })
-        console.log(playlists)
-        let track = playlists[0].tracks[0]
-        this._database.writeTrack(track)
-        track = playlists[0].tracks[1]
-        this._database.writeTrack(track)
-
     }
 }
