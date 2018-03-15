@@ -20,6 +20,9 @@ export const settings = {
         'ryanananda',
         'safrizalpotret',
         'tasyazgs588',
-    ]
+    ],
 
+    // Spotify
+    spotifyLink: 'https://open.spotify.com/user/1240132288/playlist/6NFODPrTH7nLylJS78DDlF?si=Epie3xBrQKGhwOlvYSf4mQ',
+    spotifyImg: 'https://steemitimages.com/DQmYoTrhUhaHzL7kdvd7Hwcs5aw9inx8enttB632d9zB8KK/image.png',
 }

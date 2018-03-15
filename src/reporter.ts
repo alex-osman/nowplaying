@@ -97,8 +97,8 @@ export const reportRecap = (_users) => {
     report.reportOptions.startWeek = new Date(2018, 0, (report.reportOptions.week - 1) * 7)
     report.reportOptions.endWeek = new Date(2018, 0, (report.reportOptions.week) * 7 - 1)
     report.reportOptions.payout = settings.payout
-    report.reportOptions.spotifyLink = 'https://open.spotify.com/user/1240132288/playlist/17uu5RLiigAv9sdqowWeSX'
-    report.reportOptions.spotifyImg = 'https://steemitimages.com/DQmSjkZSDVmVWMHW9XXEVS5j54fxZ6z8pzh1QrGxvU5qseo/image.png'
+    report.reportOptions.spotifyLink = settings.spotifyLink
+    report.reportOptions.spotifyImg = settings.spotifyImg
 
     report.users = _users.filter(user => user.username != 'nowplaying-music')//.filter(weekFilter(report.reportOptions.week))
     report.post.author = settings.username
