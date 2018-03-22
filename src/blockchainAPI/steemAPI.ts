@@ -33,9 +33,7 @@ export class SteemAPI {
 
 
     getPost(post: Post): Promise<Post> {
-        steem.api.setOptions({
-            url: 'wss://steemd-int.steemit.com'
-        });
+        steem.api.setOptions({ url: 'https://api.steemit.com'});
         return new Promise((resolve, reject) => {
             steem.api.getContent(post.author, post.permlink, (err, result) => {
                 if (err) {

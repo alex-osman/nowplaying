@@ -3,7 +3,7 @@ export const settings = {
     username: process.env.STEEM_USERNAME,
     password: process.env.STEEM_PASSWORD,
     week: Math.ceil(((((new Date() as any) - (new Date(2018, 0, 1) as any)) / 86400000) ) / 7),
-    payout: 8.001,
+    payout: 0.4,
     tags: ['nowplaying', 'music', 'contest', 'share', 'spotify'],
     blacklist: [
         'arsaljr',
@@ -23,6 +23,6 @@ export const settings = {
     ],
 
     // Spotify
-    spotifyLink: 'https://open.spotify.com/user/1240132288/playlist/6NFODPrTH7nLylJS78DDlF?si=Epie3xBrQKGhwOlvYSf4mQ',
-    spotifyImg: 'https://steemitimages.com/DQmYoTrhUhaHzL7kdvd7Hwcs5aw9inx8enttB632d9zB8KK/image.png',
+    spotifyLink: 'https://open.spotify.com/user/1240132288/playlist/0zOxW1tvzXkNUXtlfMIV5C?si=gFlNl8WxRX6Tsc8QF-ffAw',
+    spotifyImg: 'https://steemitimages.com/DQmXpCkcSg6oZE9ucEiQHvAFJmQj2iWzidGjrHWYpKMDVnb/image.png',
 }
