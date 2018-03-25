@@ -6,4 +6,5 @@ export interface BlockchainAPI {
     getPosts: (tag: string) => Promise<Post[]>
     getPost: (post: Post) => Promise<Post>
     getWallet: (user: User) => Promise<Wallet>
+    getReplies: (post: Post) => Promise<any>
 }

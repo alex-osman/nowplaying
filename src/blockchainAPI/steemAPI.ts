@@ -1,6 +1,7 @@
 import { Post } from '../classes/post';
 import { Wallet } from '../classes/wallet';
 import { User } from '../classes/user';
+
 const steem = require('steem')
 
 export class SteemAPI {
@@ -24,6 +25,7 @@ export class SteemAPI {
                             did_comment: false,
                             did_vote: false,
                             is_approved: false,
+                            children: post.children
                         }) as Post)
                     )
                 }
@@ -61,6 +63,33 @@ export class SteemAPI {
                 wallet.parseSteem(response[0].balance)
 
                 resolve(wallet)
+            })
+        })
+    }
+
+    getReplies(post: Post): Promise<any> {
+        return new Promise((resolve, reject) => {
+            steem.api.getContentReplies(post.author, post.permlink, (err, response) => {
+                if (err) {
+                    reject({ err })
+                }
+                resolve(response.map(item => ({
+                    author: item.author,
+                    permlink: item.permlink,
+                    body: item.body,
+                    children: item.children
+                })))
+            })
+        })
+    }
+    
+    scrapeReplies(post: Post): Promise<any> {
+        return new Promise((resolve, reject) => {
+            steem.api.getContentReplies(post.author, post.permlink, (err, response) => {
+                if (err) {
+                    reject({ err })
+                }
+                
             })
         })
     }

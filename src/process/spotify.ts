@@ -7,12 +7,13 @@ export class Spotify {
     private _user: string = '1240132288'
     private _urls = {
         tracks: (userId, playlistId) => `https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks`,
-        playlists: (userId, playlistId?: number) => `https://api.spotify.com/v1/users/${userId}/playlists/?limit=50`
+        playlists: (userId, playlistId?: number) => `https://api.spotify.com/v1/users/${userId}/playlists/?limit=50`,
+        search: (track, artist) => `https://api.spotify.com/v1/search?q=${encodeURIComponent(track)}%20${encodeURIComponent(artist)}&type=track`
     }
     private _headers = {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer BQCFiQxOtRSuuE60u8jSq_LrvRoMnDySwxe17B4O5-NnAS-xLeON2xXeMliJATyVeE-XzA_xWv2mV-uKyo84GivVJ88NuIjgzdvr6YhjfA0oVxwlpX_y0qFCH3ECePmAgS2K2K4kZABQiBwW4PwFL2RHhq7TnY0'
+        'Authorization': 'Bearer BQDw3hCQMubI01BP0VhSxYXN-K9upGmHdY_ioGC2IDKh6NiHq9mH8hB8Q4XxWyrPU8nef82lHXHYW8MryRa7_rKB-38mEAqyYkxoehp6ZbjWpc1CEJWtghrXuJZsnf7xqpsOwSGsglKtlFaq8A5PgqGc4x0JFzU'
     }
 
     private constructor() { }
@@ -57,6 +58,19 @@ export class Spotify {
         const playlists = await Promise.all(playlistPromises)
 
         return playlists
+    }
+
+    public trackSearch = async (trackName: string, artistName: string) => {
+        const response = JSON.parse(await request({ url: this._urls.search(trackName, artistName), headers: this._headers }))
+
+        const song = response.tracks.items[0]
+        const track = new Track()
+
+        track.spotify_id = song.id;
+        track.name = song.name;
+        track.artists = song.artists.map(artist => artist.name);
+        track.img = song.album.images[0].url
+        return track
     }
 
     public test = async () => {

@@ -56,6 +56,7 @@ export class sqlDatabase {
             did_comment: d.did_comment,
             did_vote: d.did_vote,
             is_approved: d.is_approved,
+            children: d.children
         }) as Post)
         .filter(post => !settings.blacklist.includes(post.author))
     }
@@ -83,7 +84,7 @@ export class sqlDatabase {
 
         const updateResponses = await Promise.all(toUpdate.map(async postObj => ({
             post: postObj.post,
-            result: await this._con.query('UPDATE posts SET votes=? WHERE author=? AND permlink=?', [postObj.post.votes, postObj.post.author, postObj.post.permlink])
+            result: await this._con.query('UPDATE posts SET votes=?, children=? WHERE author=? AND permlink=?', [postObj.post.votes, postObj.post.children, postObj.post.author, postObj.post.permlink])
         })))
         
         return {
