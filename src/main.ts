@@ -12,7 +12,7 @@ const local = {
 };
 
 const main = async () => {
-  // const TIME = 1000 * 60 * 30
+  const TIME = 1000 * 60 * 30
   const bot = new Bot()
   bot.communityName = settings.communityName
   bot.week = settings.week
@@ -21,11 +21,11 @@ const main = async () => {
   bot.setBroadcaster(new SteemBroadcaster())
   bot.setBlockchainAPI(new SteemAPI())
   await bot.setDatabase(new sqlDatabase(local))
-  bot.postWeek()
+  // bot.postWeek()
   // every minute scrape, vote, and comment
-  // setInterval(() => { bot.scrape(); }, TIME)
+  setInterval(() => { bot.scrape(); }, TIME)
   
-  // bot.scrape()
+  bot.scrape()
 }
 
 main()

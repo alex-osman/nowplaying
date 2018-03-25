@@ -15,6 +15,7 @@ export class SteemBroadcaster {
     makeVote(post: Post, votingPower: number = 100): Promise<any> {
         return new Promise((resolve, reject) => {
             steem.broadcast.vote(this._postingWif, this._username, post.author, post.permlink, votingPower * 100, (error, result) => {
+	    	try {
                 if (error) {
                     let err = error
                     if (error.payload.error.data.code) {
@@ -64,6 +65,9 @@ export class SteemBroadcaster {
                     console.log('successfully voted for ', post.author)
                     resolve(result)
                 }
+		} catch(e) {
+			console.log('hit some err', e)
+		}
             })
         })
     }
