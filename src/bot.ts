@@ -218,10 +218,19 @@ export class Bot {
                 replies = await this._blockchainAPI.getReplies(questionReply as Post)
                 if (replies.length) {
                     const response = replies[0]
-                    const artist = response.body.split('\n')[0]
-                    const song = response.body.split('\n')[1]
-                    console.log('artist: ', artist)
-                    console.log('song: ', song)
+                    console.log(response)
+                    const artistName = response.body.split('\n')[0]
+                    const trackName = response.body.split('\n')[1]
+                    console.log('artist: ', artistName)
+                    console.log('track: ', trackName)
+                    // search for the track
+                    const spotify = Spotify.Instance()
+                    const track = await spotify.trackSearch(artistName, trackName)
+                    console.log(track)
+
+                    this._broadcaster.makeReply(response, `Adding ${track.name} to the weekly playlist [![](${track.img})](${track.getLink()})`)
+
+                    // this._broadcaster.makeComment(replyPost)
                 }
             } else {
             }

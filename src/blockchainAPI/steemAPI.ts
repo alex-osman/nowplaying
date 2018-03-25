@@ -25,6 +25,7 @@ export class SteemAPI {
                             did_comment: false,
                             did_vote: false,
                             is_approved: false,
+                            children: post.children
                         }) as Post)
                     )
                 }
