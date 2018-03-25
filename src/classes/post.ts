@@ -10,7 +10,8 @@ export class Post {
     body: string;
     jsonMetadata: JsonMetadata;
     votes: number;
-    active_votes: { voter: string }[]
+    active_votes: { voter: string }[];
+    children: number;
     
     // SQL
     did_comment: boolean;

@@ -97,6 +97,21 @@ export class SteemBroadcaster {
             })
         })
     }
+
+    makeReply(post: Post, body: string): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            console.log('replying to ', post.author, post.permlink)
+            console.log(body)
+            steem.broadcast.comment(this._postingWif, post.author, post.permlink, this._username, `re-${post.permlink}`, '', body, { tags: ['nowplaying']}, (err, result) => {
+                if (err) {
+                    console.log('encountered an error replying')
+                } else {
+                    console.log('successfully replied')
+                }
+            })
+        })
+    }
+
     makePost(post: Post): Promise<any> {
         return new Promise((resolve, reject) => {
             console.log(post)

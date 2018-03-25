@@ -22,6 +22,7 @@ const main = async () => {
   bot.setBlockchainAPI(new SteemAPI())
   await bot.setDatabase(new sqlDatabase(local))
   // bot.postWeek()
+  bot.spotify()
   // every minute scrape, vote, and comment
   setInterval(() => { bot.scrape(); }, TIME)
   

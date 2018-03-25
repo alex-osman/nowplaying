@@ -7,6 +7,7 @@ import { weekFilter } from './filters';
 import { Statistics } from './statistics';
 import { Post } from './classes/post';
 import { Report } from './classes/report';
+import { Spotify } from './process/spotify';
 const dateformat = require('dateformat')
 
 const steem = require('steem')
@@ -129,7 +130,7 @@ export class Bot {
     async payout(totalPayout: number): Promise<any> {
         const allUsers = await this._database.getUsers()
         const weekUsers = allUsers.filter(weekFilter(this.week))
-
+        console.log(weekUsers.map(u => u.username))
         const wallet = await this._blockchainAPI.getWallet({ username: this.username } as User)
         wallet.setActive(this.getActiveWif())
 
@@ -169,6 +170,7 @@ export class Bot {
         try {
             const users = await this._database.getUsers()
             const report = await reportRecap(users)
+            // this._broadcaster.makePost(report.post)
             return report
         } catch(e) {
             console.log(e)
@@ -183,5 +185,69 @@ export class Bot {
         statistics.users = await this._database.getUsers()
 
         statistics.general()
+    }
+
+    async spotify() {
+        const spotify = Spotify.Instance()
+        const playlists = await spotify.getPlaylists()
+        playlists.forEach(playlist => {
+            playlist.tracks.forEach(async track => {
+                try {
+                    await this._database.writeTrack(track)
+                } catch(e) {
+                    console.log(`couldn't write track ${track.name} due to ${e}`)
+                    console.warn(e)
+                }
+            })
+        })
+    }
+
+    async replies() {
+        try {
+            const allPosts = await this._database.getPosts()
+            
+            // Only reply on approved posts
+            const toReplyPosts = allPosts.filter(post => !post.did_vote && post.is_approved)
+            // console.log('- replying to', toReplyPosts);
+
+            const post = toReplyPosts[0];
+            let replies = await this._blockchainAPI.getReplies(post)
+            const questionReply = replies.find(reply => reply.author === this.username)
+            if (questionReply.children) {
+                // Read the replies
+                replies = await this._blockchainAPI.getReplies(questionReply as Post)
+                if (replies.length) {
+                    const response = replies[0]
+                    
+                    const artistName = response.body.split('\n')[0]
+                    const trackName = response.body.split('\n')[1]
+                    
+                    // search for the track
+                    const spotify = Spotify.Instance()
+                    const track = await spotify.trackSearch(artistName, trackName)
+                    console.log(track)
+
+                    this._broadcaster.makeReply(response, `Adding ${track.name} to the weekly playlist [![](${track.img})](${track.getLink()})`)
+
+                    // this._broadcaster.makeComment(replyPost)
+                }
+            } else {
+            }
+
+            
+            // Reply on each one with 25 second breaks
+            // toReplyPosts.forEach((post, index) => {
+            //     setTimeout(async () => {
+            //         try {
+            //             await this._broadcaster.makeVote(post)
+            //             await this._database.writeVote(post)
+            //         } catch(e) {
+            //             console.log('err voting')
+            //         }
+            //     }, index * 25 * 1000)
+            // })
+        } catch(e) {
+            console.log('something went wrong', e)
+        } 
     }
 }
