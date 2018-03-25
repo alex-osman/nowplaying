@@ -201,4 +201,45 @@ export class Bot {
             })
         })
     }
+
+    async replies() {
+        try {
+            const allPosts = await this._database.getPosts()
+            
+            // Only reply on approved posts
+            const toReplyPosts = allPosts.filter(post => !post.did_vote && post.is_approved)
+            // console.log('- replying to', toReplyPosts);
+
+            const post = toReplyPosts[0];
+            let replies = await this._blockchainAPI.getReplies(post)
+            const questionReply = replies.find(reply => reply.author === this.username)
+            if (questionReply.children) {
+                // Read the replies
+                replies = await this._blockchainAPI.getReplies(questionReply as Post)
+                if (replies.length) {
+                    const response = replies[0]
+                    const artist = response.body.split('\n')[0]
+                    const song = response.body.split('\n')[1]
+                    console.log('artist: ', artist)
+                    console.log('song: ', song)
+                }
+            } else {
+            }
+
+            
+            // Reply on each one with 25 second breaks
+            // toReplyPosts.forEach((post, index) => {
+            //     setTimeout(async () => {
+            //         try {
+            //             await this._broadcaster.makeVote(post)
+            //             await this._database.writeVote(post)
+            //         } catch(e) {
+            //             console.log('err voting')
+            //         }
+            //     }, index * 25 * 1000)
+            // })
+        } catch(e) {
+            console.log('something went wrong', e)
+        } 
+    }
 }
