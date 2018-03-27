@@ -206,11 +206,11 @@ export class Bot {
     async replies() {
         try {
             const spotify = Spotify.Instance()
-            await spotify.authenticate()
-            return
+            const tokens = await spotify.authenticate()
+            
             const playlists = await spotify.getPlaylists()
             const playlist = playlists.find(playlist => playlist.week === this.week)
-
+            
             const allPosts = (await this._database.getPosts())
                 .filter(post => post.read_replies)
             

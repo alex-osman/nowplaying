@@ -5,8 +5,8 @@ import { settings } from '../settings';
 
 export class Spotify {
     private static spotify: Spotify = null;
-    private access_token: string = process.env.ACCESS_TOKEN;
-    private refresh_token: string = process.env.SPOTIFY_REFRESH_TOKEN;
+    public access_token: string = process.env.ACCESS_TOKEN;
+    public refresh_token: string = process.env.SPOTIFY_REFRESH_TOKEN;
     private _user: string = '1240132288'
     private _urls = {
         auth: () => `https://accounts.spotify.com/api/token`,
@@ -49,7 +49,9 @@ export class Spotify {
                 })
             )
             console.log('~refreshed~')
+            console.log(response)
             this.access_token = response.access_token
+            console.log('access:', this.access_token)
             return true
         } catch(e) {
             console.warn('error refreshing', e)
@@ -75,12 +77,13 @@ export class Spotify {
                     })
                 )
                 console.log('~authenticated~')
+                console.log(response)
                 this.access_token = response.access_token;
                 this.refresh_token = response.refresh_token;
-                setInterval(this.refresh_authentication, response.expires_in * 1000)
+                console.log('access:', this.access_token)
+                console.log('refresh:', this.refresh_token)
             }
-            await new Promise(resolve => setTimeout(resolve, 1000))
-            this.refresh_authentication()
+            setInterval(this.refresh_authentication, 3600 * 1000)
             return true
         } catch(e) {
             if (e.error) {
@@ -101,7 +104,11 @@ export class Spotify {
             const response = JSON.parse(
                 await request.post({
                     url: this._urls.addTrack(this._user, playlist.spotify_id, track.spotify_id),
-                    headers: this._headers
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${this.access_token}`,
+                    }
                 })
             )
             return response
@@ -117,7 +124,15 @@ export class Spotify {
      */
     private getTracks = async (playlist: Playlist) => {
         try {
-            const response = JSON.parse(await request({ url: this._urls.tracks(this._user, playlist.id), headers: this._headers }))
+            const response = JSON.parse(
+                await request({
+                    url: this._urls.tracks(this._user, playlist.spotify_id),
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${this.access_token}`,
+                    }
+                }))
             playlist.tracks = response.items
                 .map(item => item.track)
                 .map(item => ({
@@ -135,26 +150,48 @@ export class Spotify {
     }
 
     public getPlaylists = async () => {
-        const response = JSON.parse(await request({ url: this._urls.playlists(this._user), headers: this._headers }))
-        const playlistPromises = response.items
-            .filter(item => item.name.includes('#nowplaying'))
-            .map(item => Object.assign({}, item, { week: parseInt(item.name.split('#nowplaying')[1]) }))
-            .map((item): Playlist => {
-                const playlist = new Playlist()
-                playlist.spotify_id = item.id;
-                playlist.name = item.name;
-                playlist.week = item.week
-                return playlist
-            })
-            .map(playlist => this.getTracks(playlist)) as Promise<Playlist>[]
-        const playlists = await Promise.all(playlistPromises)
+        try {
+            console.log('access:', this.access_token)
+            const response = JSON.parse(
+                await request({
+                    url: this._urls.playlists(this._user),
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${this.access_token}`,
+                    }
+                }))
+            console.log('got playlists response')
+            const playlistPromises = response.items
+                .filter(item => item.name.includes('#nowplaying'))
+                .map(item => Object.assign({}, item, { week: parseInt(item.name.split('#nowplaying')[1]) }))
+                .map((item): Playlist => {
+                    const playlist = new Playlist()
+                    playlist.spotify_id = item.id;
+                    playlist.name = item.name;
+                    playlist.week = item.week
+                    return playlist
+                })
+                .map(playlist => this.getTracks(playlist)) as Promise<Playlist>[]
+            const playlists = await Promise.all(playlistPromises)
 
-        return playlists
+            return playlists
+        } catch(e) {
+            console.log('getplaylists error', e)
+        }
     }
 
     public trackSearch = async (trackName: string, artistName: string) => {
         try {
-            const response = JSON.parse(await request({ url: this._urls.search(trackName, artistName), headers: this._headers }))
+            const response = JSON.parse(
+                await request({
+                    url: this._urls.search(trackName, artistName),
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${this.access_token}`,
+                    }
+                }))
 
             const song = response.tracks.items[0]
             const track = new Track()
