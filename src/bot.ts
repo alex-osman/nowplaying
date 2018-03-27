@@ -56,10 +56,10 @@ export class Bot {
             const allPosts = await this._blockchainAPI.getPosts(this.communityName)
             const results = await this._database.writePosts(allPosts)
             console.log(`- created: ${results.created}\n- updated: ${results.updated}`)
-            await this.replies()
             await this.approve()
             await this.comment()
             await this.vote()
+            await this.replies()
             
         } catch(e) {
             console.log(e)
@@ -272,6 +272,7 @@ export class Bot {
                         }
                     })
                 }
+                return true
             })
         } catch(e) {
             console.log('something went wrong', e)
