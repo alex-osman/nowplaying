@@ -25,4 +25,7 @@ export const settings = {
     // Spotify
     spotifyLink: 'https://open.spotify.com/user/1240132288/playlist/0zOxW1tvzXkNUXtlfMIV5C?si=gFlNl8WxRX6Tsc8QF-ffAw',
     spotifyImg: 'https://steemitimages.com/DQmXpCkcSg6oZE9ucEiQHvAFJmQj2iWzidGjrHWYpKMDVnb/image.png',
+    spotifyUserId: 1240132288,
+
+    commentBody: `Thanks for entering this week's #nowplaying!\nIf you would like your song added to the weekly spotify playlist, reply to this comment in the following format:\n\`\`\`\nArtist\nSong\n\`\`\`\nIf you have multiple songs, make multiple replies to this comment`
 }

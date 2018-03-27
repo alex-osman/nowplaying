@@ -1,5 +1,6 @@
 import { JsonMetadata } from './jsonMetadata'
 export class Post {
+    id: number;
     
     // STEEM
     author: string;
@@ -12,6 +13,7 @@ export class Post {
     votes: number;
     active_votes: { voter: string }[];
     children: number;
+    read_replies: boolean;
     
     // SQL
     did_comment: boolean;
