@@ -206,7 +206,8 @@ export class Bot {
     async replies() {
         try {
             const spotify = Spotify.Instance()
-
+            await spotify.authenticate()
+            return
             const playlists = await spotify.getPlaylists()
             const playlist = playlists.find(playlist => playlist.week === this.week)
 
