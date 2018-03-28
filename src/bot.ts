@@ -59,6 +59,7 @@ export class Bot {
             await this.approve()
             await this.comment()
             await this.vote()
+            await this.replies()
             
         } catch(e) {
             console.log(e)
@@ -84,7 +85,7 @@ export class Bot {
     async comment(): Promise<any> {
         try {
             const allPosts = await this._database.getPosts()
-            // Comment regardless of approved
+            
             const toCommentPosts = allPosts.filter(post => !post.did_comment && post.is_approved)
             console.log('- commenting on', toCommentPosts)
 
@@ -95,7 +96,7 @@ export class Bot {
                         await this._broadcaster.makeComment(post)
                         await this._database.writeComment(post)
                     } catch(e) {
-                        console.log('err commenting')
+                        console.log('err commenting', e)
                     }
                 }, index * 22 * 1000)
             })
@@ -204,48 +205,75 @@ export class Bot {
 
     async replies() {
         try {
-            const allPosts = await this._database.getPosts()
+            const spotify = Spotify.Instance()
+            const tokens = await spotify.authenticate()
             
-            // Only reply on approved posts
-            const toReplyPosts = allPosts.filter(post => !post.did_vote && post.is_approved)
-            // console.log('- replying to', toReplyPosts);
+            const playlists = await spotify.getPlaylists()
+            const playlist = playlists.find(playlist => playlist.week === this.week)
+            
+            const allPosts = (await this._database.getPosts())
+                .filter(post => post.read_replies)
+            
+            // find a post to reply on
+            allPosts.forEach(async rootPost => {
+                console.log('looking at', rootPost.author)
+                let replies: Post[] = await this._blockchainAPI.getReplies(rootPost)
+                const questionReply = replies.find(reply => reply.author === this.username)
+                
+                if (questionReply && questionReply.children) {
+                    console.log('reading', questionReply.author)
+                    // Read the replies
+                    replies = await this._blockchainAPI.getReplies(questionReply as Post)
+                    replies
+                    // Get responses from the author
+                    .filter((post: Post) => post.author === rootPost.author)
+                    .forEach(async (post: Post) => {
+                        try {
+                            // Check if we already commented on this one
+                            const subreplies = await this._blockchainAPI.getReplies(post)
+                            if (subreplies.find((reply: Post) => reply.author === this.username)) {
+                                // we already commented here
+                                console.log('already commented on you')
+                                return null
+                            } else {
+                                // Parse the comment
+                                const artistName = post.body.split('\n')[0]
+                                const trackName = post.body.split('\n')[1]
+                                console.log(artistName)
+                                console.log(trackName)
+                                // Only two lines
+                                if (post.body.split('\n').length === 2) {
+                                    // Search the track
+                                    try {
+                                        const track = await spotify.trackSearch(artistName, trackName)
+                                        track.postId = rootPost.id
+                                        try {
+                                            // make the reply
+                                            await this._broadcaster.makeReply(post, `Adding ${track.name} to the weekly playlist\n[![](${track.img})](${playlist.getLink()})`)
+                                            console.log('Posted a reply')
 
-            const post = toReplyPosts[0];
-            let replies = await this._blockchainAPI.getReplies(post)
-            const questionReply = replies.find(reply => reply.author === this.username)
-            if (questionReply.children) {
-                // Read the replies
-                replies = await this._blockchainAPI.getReplies(questionReply as Post)
-                if (replies.length) {
-                    const response = replies[0]
-                    
-                    const artistName = response.body.split('\n')[0]
-                    const trackName = response.body.split('\n')[1]
-                    
-                    // search for the track
-                    const spotify = Spotify.Instance()
-                    const track = await spotify.trackSearch(artistName, trackName)
-                    console.log(track)
+                                            // add to the database
+                                            await this._database.writeTrack(track)
+                                            console.log('wrote to database')
 
-                    this._broadcaster.makeReply(response, `Adding ${track.name} to the weekly playlist [![](${track.img})](${track.getLink()})`)
-
-                    // this._broadcaster.makeComment(replyPost)
+                                            // add to the playlist
+                                            await spotify.addTrack(playlist, track)
+                                            console.log('added ', track.name)
+                                        } catch (e) {
+                                            console.warn('Problem posting a reply', e)
+                                        }
+                                    } catch (e) {
+                                        console.warn('Problem finding the track', e)
+                                    }
+                                }
+                            }
+                        } catch(e) {
+                            console.warn('Error parsing post', e)
+                        }
+                    })
                 }
-            } else {
-            }
-
-            
-            // Reply on each one with 25 second breaks
-            // toReplyPosts.forEach((post, index) => {
-            //     setTimeout(async () => {
-            //         try {
-            //             await this._broadcaster.makeVote(post)
-            //             await this._database.writeVote(post)
-            //         } catch(e) {
-            //             console.log('err voting')
-            //         }
-            //     }, index * 25 * 1000)
-            // })
+                return true
+            })
         } catch(e) {
             console.log('something went wrong', e)
         } 

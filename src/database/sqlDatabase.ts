@@ -48,6 +48,7 @@ export class sqlDatabase {
     async getPosts(): Promise < Post[] > {
         const posts: Array < any > = await this._con.query('SELECT * FROM posts');
         return posts.map(d => ({
+            id: d.id,
             author: d.author,
             permlink: d.permlink,
             tag: d.tag,
@@ -56,7 +57,8 @@ export class sqlDatabase {
             did_comment: d.did_comment,
             did_vote: d.did_vote,
             is_approved: d.is_approved,
-            children: d.children
+            children: d.children,
+            read_replies: d.read_replies
         }) as Post)
         .filter(post => !settings.blacklist.includes(post.author))
     }
@@ -117,7 +119,6 @@ export class sqlDatabase {
 
     async writeTrack(track: Track): Promise<any> {
         const result = await this._con.query('INSERT INTO tracks SET ?', [track])
-        console.log(result)
         return result
     }
 }

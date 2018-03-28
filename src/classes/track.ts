@@ -4,6 +4,7 @@ export class Track {
     week: number;
     artists: string[];
     img: string;
+    postId: number;
 
     public getLink() {
         return `https://open.spotify.com/track/${this.spotify_id}`

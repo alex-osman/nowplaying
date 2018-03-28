@@ -25,7 +25,8 @@ export class SteemAPI {
                             did_comment: false,
                             did_vote: false,
                             is_approved: false,
-                            children: post.children
+                            children: post.children,
+                            read_replies: true,
                         }) as Post)
                     )
                 }
@@ -66,9 +67,7 @@ export class SteemAPI {
             })
         })
     }
-<<<<<<< HEAD
-}
-=======
+
 
     getReplies(post: Post): Promise<any> {
         return new Promise((resolve, reject) => {
@@ -92,9 +91,8 @@ export class SteemAPI {
                 if (err) {
                     reject({ err })
                 }
-                
+                resolve(response)
             })
         })
     }
 }
->>>>>>> 147ce8aa9bdb486e6e6ec6b4bc820752eb03c1f6
