@@ -1,3 +1,7 @@
+import { Bot } from "../src/bot";
+import { init } from '../src/process/init';
+
+
 describe('TestExample0', () => {
   // Act before assertions
   beforeAll(async () => {
@@ -15,8 +19,10 @@ describe('TestExample0', () => {
     expect(5).toBe(5);
   });
 
-  it('prints an environment variable', () => {
-    console.log('env var', process.env.TEST_RESULTS_DIR, process.env.BRANCH)
-    expect(3).toBe(3)
+  it('creates a bot successfully', () => {
+    return init().then(bot => {
+      expect(bot).toBeTruthy
+      expect(bot.users.length).toBe(0)
+    })
   })
 });
