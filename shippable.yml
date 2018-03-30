@@ -18,7 +18,7 @@ build:
 
   ci:
     - mysql -e "CREATE USER shippable@localhost IDENTIFIED BY ''; GRANT ALL ON *.* TO shippable@localhost; FLUSH PRIVILEGES;"
-    - mysql -e 'create database nowplaying;'
+    - mysql -e 'create database nowplaying ;'
 
     - shippable_retry npm install
     - npm run shippable-test
