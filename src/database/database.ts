@@ -4,6 +4,7 @@ import { Track } from '../classes/track';
 
 export interface Database {
     setup: () => Promise<void>
+    close: () => Promise<void>
     getUsers: () => Promise<User[]>
     getPosts: () => Promise<Post[]>
     

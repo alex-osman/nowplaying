@@ -18,11 +18,4 @@ describe('TestExample0', () => {
   it('this also always passes', () => {
     expect(5).toBe(5);
   });
-
-  it('creates a bot successfully', () => {
-    return init().then(bot => {
-      expect(bot).toBeTruthy
-      expect(bot.users.length).toBe(0)
-    })
-  })
 });
