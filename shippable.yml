@@ -1,5 +1,7 @@
 # Language setting http://docs.shippable.com/ci/languages/node/
 language: node_js
+node_js:
+  - 8.8.1
 
 # use this to control what branches get built.
 # http://docs.shippable.com/ci/advancedOptions/branches/
