@@ -16,8 +16,7 @@ describe('TestExample0', () => {
   });
 
   it('prints an environment variable', () => {
-    console.log(process.env.TEST_RESULTS_DIR)
-    console.log('env var', process.env)
+    console.log('env var', process.env.TEST_RESULTS_DIR, process.env.BRANCH)
     expect(3).toBe(3)
   })
 });
