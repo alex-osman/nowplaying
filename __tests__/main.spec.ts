@@ -15,4 +15,9 @@ describe('TestExample0', () => {
     expect(5).toBe(5);
   });
 
+  it('prints an environment variable', () => {
+    console.log(process.env.TEST_RESULTS_DIR)
+    console.log('env var', process.env)
+    expect(3).toBe(3)
+  })
 });
