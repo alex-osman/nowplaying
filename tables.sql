@@ -23,6 +23,9 @@
 # Dump of table posts
 # ------------------------------------------------------------
 
+CREATE DATABASE 'nowplaying';
+USE 'nowplaying';
+
 CREATE TABLE `posts` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `author` varchar(20) NOT NULL DEFAULT '',
