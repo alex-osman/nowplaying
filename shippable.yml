@@ -1,0 +1,37 @@
+language: node_js
+node_js:
+  - 8.8.1
+
+branches:
+  only:
+    - master
+
+env:
+  global:
+    - TEST_RESULTS_DIR=$SHIPPABLE_REPO_DIR/shippable/testresults
+    - DB_USER=shippable
+
+services:
+  - mysql
+
+build:
+
+  ci:
+    - mysql -e "CREATE USER shippable@localhost IDENTIFIED BY ''; GRANT ALL ON *.* TO shippable@localhost; FLUSH PRIVILEGES;"
+    - mysql -e 'create database nowplaying;'
+    - mysql -e 'source ./tables.sql'
+
+    - shippable_retry npm install
+    - npm run shippable-test
+
+
+# http://docs.shippable.com/integrations/overview/
+integrations:
+
+  # http://docs.shippable.com/ci/shippableyml/#notifications
+  notifications:
+    - integrationName: email
+      type: email
+      on_success: always
+      on_failure: always
+      on_pull_request: always

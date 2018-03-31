@@ -3,3 +3,4 @@ lib
 build
 coverage
 .vscode
+.DS_Store

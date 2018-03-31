@@ -49,6 +49,10 @@ export class Bot {
         this.users = await this._database.getUsers()
     }
 
+    async close() {
+        await this._database.close()
+    }
+
     async scrape(): Promise<any> {
         console.log(`[${dateformat(new Date(), 'mmmm dS, h:MM:ss TT')}]`)
         console.log(`[Start Scraping]`)

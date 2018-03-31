@@ -17,6 +17,7 @@
     "typescript": "~2.6.2"
   },
   "scripts": {
+    "shippable-test": "jest",
     "clean": "rimraf coverage build tmp",
     "build": "tsc -p tsconfig.release.json",
     "watch": "tsc -w -p tsconfig.release.json",

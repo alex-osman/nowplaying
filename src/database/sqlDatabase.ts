@@ -16,6 +16,9 @@ export class sqlDatabase {
     async setup() {
         this._con = await mysql.createConnection(this._options)
     }
+    async close() {
+        return this._con.end()
+    }
 
     async getUsers(): Promise < User[] > {
         const users: Array < any > = await this._con.query('SELECT * FROM posts WHERE is_approved=1');
