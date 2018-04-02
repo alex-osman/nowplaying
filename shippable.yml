@@ -9,6 +9,7 @@ branches:
 env:
   global:
     - TEST_RESULTS_DIR=$SHIPPABLE_REPO_DIR/shippable/testresults
+    - NOWPLAYING_TESTING=true
     - DB_USER=shippable
 
 services:

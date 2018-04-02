@@ -1,8 +1,10 @@
+const isTest = Boolean(process.env.NOWPLAYING_TESTING)
+
 export const settings = {
     communityName: 'nowplaying',
     username: process.env.STEEM_USERNAME,
     password: process.env.STEEM_PASSWORD,
-    week: Math.ceil(((((new Date() as any) - (new Date(2018, 0, 1) as any)) / 86400000) ) / 7),
+    week: isTest ? 10 : Math.ceil(((((new Date() as any) - (new Date(2018, 0, 1) as any)) / 86400000) ) / 7),
     payout: 0.4,
     tags: ['nowplaying', 'music', 'contest', 'share', 'spotify'],
     blacklist: [
