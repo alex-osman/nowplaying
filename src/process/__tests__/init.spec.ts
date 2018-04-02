@@ -7,11 +7,7 @@ describe('Init Test', () => {
     it('creates a bot successfully', async () => {
         const bot = await init()
         expect(bot).toBeTruthy
-        expect(bot.users.length).toBeTruthy
+        expect(bot.users).toBeTruthy
         bot.close()
-    })
-
-    afterAll(async () => {
-        console.log('after everything')
     })
 });
