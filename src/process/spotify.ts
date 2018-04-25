@@ -60,7 +60,8 @@ export class Spotify {
     }
 
     public authenticate = async () => {
-        console.log('authenticating...', this.access_token, this.refresh_token, process.env.ACCESS_TOKEN)
+        const { SPOTIFY_AUTH, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = process.env
+        console.log('authenticating...', SPOTIFY_AUTH, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
         try {
             if (!this.refresh_token) {
                 const response = JSON.parse(
