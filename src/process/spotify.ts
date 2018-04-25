@@ -60,6 +60,7 @@ export class Spotify {
     }
 
     public authenticate = async () => {
+        console.log('authenticating...', this.access_token, this.refresh_token, process.env.ACCESS_TOKEN)
         try {
             if (!this.refresh_token) {
                 const response = JSON.parse(
@@ -89,9 +90,11 @@ export class Spotify {
             if (e.error) {
                 const error = JSON.parse(e.error)
                 if (error.error_description === 'Authorization code expired') {
-                    console.warn('Authoarization __ code __ expired doofus')
+                    console.warn('Authorization __ code __ expired doofus')
+                } else if (error.error_description === 'Invalid access token') {
+                    console.warn('Invalid Access cokde', error)
                 } else {
-                    console.warn('~~error1~~', error)
+                    console.warn(error.error_description)
                 }
             } else {
                 console.warn('didnt go well', e)
@@ -192,15 +195,18 @@ export class Spotify {
                         'Authorization': `Bearer ${this.access_token}`,
                     }
                 }))
-
-            const song = response.tracks.items[0]
-            const track = new Track()
-
-            track.spotify_id = song.id;
-            track.name = song.name;
-            track.artists = song.artists.map(artist => artist.name);
-            track.img = song.album.images[0].url
-            return track
+            if (response.tracks.items.length) {
+                const song = response.tracks.items[0]
+                const track = new Track()
+                
+                track.spotify_id = song.id;
+                track.name = song.name;
+                track.artists = song.artists.map(artist => artist.name);
+                track.img = song.album.images[0].url
+                return track
+            } else {
+                throw { error: 'cant find', trackName, artistName }
+            }
         } catch(e) {
             console.warn('error searching for track', trackName, artistName, this._urls.search(trackName, artistName), e)
             throw e

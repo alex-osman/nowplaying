@@ -163,6 +163,7 @@ export class Bot {
         try {
             const users = await this._database.getUsers()
             const report = await reportStartWeek(users)
+            // this._broadcaster.makePost(report.post)
             return report
         } catch(e) {
             console.log(e)
@@ -218,66 +219,53 @@ export class Bot {
             const allPosts = (await this._database.getPosts())
                 .filter(post => post.read_replies)
             
-            // find a post to reply on
-            allPosts.forEach(async rootPost => {
-                console.log('looking at', rootPost.author)
+
+            for (const rootPost of allPosts) {
+                console.log(rootPost.author, rootPost.title)
                 let replies: Post[] = await this._blockchainAPI.getReplies(rootPost)
+             
+                // Find our reply asking for songs 
                 const questionReply = replies.find(reply => reply.author === this.username)
-                
                 if (questionReply && questionReply.children) {
-                    console.log('reading', questionReply.author)
                     // Read the replies
                     replies = await this._blockchainAPI.getReplies(questionReply as Post)
-                    replies
-                    // Get responses from the author
-                    .filter((post: Post) => post.author === rootPost.author)
-                    .forEach(async (post: Post) => {
+                    const authorReplies = replies.filter((post: Post) => post.author === rootPost.author)
+                    for (const post of authorReplies) {
                         try {
                             // Check if we already commented on this one
                             const subreplies = await this._blockchainAPI.getReplies(post)
-                            if (subreplies.find((reply: Post) => reply.author === this.username)) {
-                                // we already commented here
-                                console.log('already commented on you')
-                                return null
-                            } else {
+                            // if not, parse the comment and reply
+                            if (!subreplies.find((reply: Post) => reply.author === this.username)) {
                                 // Parse the comment
-                                const artistName = post.body.split('\n')[0]
-                                const trackName = post.body.split('\n')[1]
+                                const artistName = post.body.split('\n')[0].trim()
+                                const trackName = post.body.split('\n')[1].trim()
                                 console.log(artistName)
                                 console.log(trackName)
-                                // Only two lines
-                                if (post.body.split('\n').length === 2) {
-                                    // Search the track
-                                    try {
-                                        const track = await spotify.trackSearch(artistName, trackName)
-                                        track.postId = rootPost.id
-                                        try {
-                                            // make the reply
-                                            await this._broadcaster.makeReply(post, `Adding ${track.name} to the weekly playlist\n[![](${track.img})](${playlist.getLink()})`)
-                                            console.log('Posted a reply')
+                                // search the track
+                                const track = await spotify.trackSearch(artistName, trackName)
+                                track.postId = rootPost.id
+                                
+                                // make the reply
+                                await this._broadcaster.makeReply(post, `Adding ${track.name} to the weekly playlist\n[![](${track.img})](${playlist.getLink()})`)
+                                console.log('Posted a reply')
+                                await (() => new Promise(resolve => setTimeout(resolve, 20000)))()
 
-                                            // add to the database
-                                            await this._database.writeTrack(track)
-                                            console.log('wrote to database')
+                                // add to the database
+                                await this._database.writeTrack(track)
+                                console.log('wrote to database')
 
-                                            // add to the playlist
-                                            await spotify.addTrack(playlist, track)
-                                            console.log('added ', track.name)
-                                        } catch (e) {
-                                            console.warn('Problem posting a reply', e)
-                                        }
-                                    } catch (e) {
-                                        console.warn('Problem finding the track', e)
-                                    }
-                                }
+                                // add to the playlist
+                                await spotify.addTrack(playlist, track)
+                                console.log('added ', track.name)
+
                             }
-                        } catch(e) {
-                            console.warn('Error parsing post', e)
+                        } catch (e) {
+                            // whatever
                         }
-                    })
+                    }
                 }
-                return true
-            })
+            }
+            console.log('done with all posts')
         } catch(e) {
             console.log('something went wrong', e)
         } 
