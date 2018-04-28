@@ -48,10 +48,7 @@ export class Spotify {
                     client_secret: process.env.SPOTIFY_CLIENT_SECRET,
                 })
             )
-            console.log('~refreshed~')
-            console.log(response)
             this.access_token = response.access_token
-            console.log('access:', this.access_token)
             return true
         } catch(e) {
             console.warn('error refreshing', e)
@@ -61,7 +58,6 @@ export class Spotify {
 
     public authenticate = async () => {
         const { SPOTIFY_AUTH, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = process.env
-        console.log('authenticating...', SPOTIFY_AUTH, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
         try {
             if (!this.refresh_token) {
                 const response = JSON.parse(
@@ -79,11 +75,8 @@ export class Spotify {
                     })
                 )
                 console.log('~authenticated~')
-                console.log(response)
                 this.access_token = response.access_token;
                 this.refresh_token = response.refresh_token;
-                console.log('access:', this.access_token)
-                console.log('refresh:', this.refresh_token)
             }
             setInterval(this.refresh_authentication, 3600 * 1000)
             return true
@@ -102,7 +95,7 @@ export class Spotify {
             }
         }
     }
-    
+
     public addTrack = async (playlist: Playlist, track: Track) => {
         try {
             const response = JSON.parse(
@@ -145,12 +138,12 @@ export class Spotify {
                     artists: item.artists.map(a => a.name),
                     week: playlist.week
                 }))
-                
+
             return playlist
         } catch(e) {
             console.log(`couldn't get track`, e)
         }
-        
+
     }
 
     public getPlaylists = async () => {
@@ -199,7 +192,7 @@ export class Spotify {
             if (response.tracks.items.length) {
                 const song = response.tracks.items[0]
                 const track = new Track()
-                
+
                 track.spotify_id = song.id;
                 track.name = song.name;
                 track.artists = song.artists.map(artist => artist.name);
@@ -244,7 +237,7 @@ export class Spotify {
             }, {})
             .sort((a, b) => a > b ? 1 : -1)
         console.log(songs)
-        
+
         const playlist_songs = playlists.map(playlist => playlist.tracks.map(track => track.toString()))
         console.log(playlist_songs)
     }

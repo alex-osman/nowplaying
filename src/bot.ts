@@ -64,7 +64,7 @@ export class Bot {
             await this.comment()
             await this.vote()
             await this.replies()
-            
+
         } catch(e) {
             console.log(e)
             console.log('got err')
@@ -89,7 +89,7 @@ export class Bot {
     async comment(): Promise<any> {
         try {
             const allPosts = await this._database.getPosts()
-            
+
             const toCommentPosts = allPosts.filter(post => !post.did_comment && post.is_approved)
             console.log('- commenting on', toCommentPosts)
 
@@ -211,20 +211,19 @@ export class Bot {
     async replies() {
         try {
             const spotify = Spotify.Instance()
-            const tokens = await spotify.authenticate()
-            
+            await spotify.authenticate()
+
             const playlists = await spotify.getPlaylists()
             const playlist = playlists.find(playlist => playlist.week === this.week)
-            
+
             const allPosts = (await this._database.getPosts())
                 .filter(post => post.read_replies)
-            
+
 
             for (const rootPost of allPosts) {
-                console.log(rootPost.author, rootPost.title)
                 let replies: Post[] = await this._blockchainAPI.getReplies(rootPost)
-             
-                // Find our reply asking for songs 
+
+                // Find our reply asking for songs
                 const questionReply = replies.find(reply => reply.author === this.username)
                 if (questionReply && questionReply.children) {
                     // Read the replies
@@ -244,7 +243,7 @@ export class Bot {
                                 // search the track
                                 const track = await spotify.trackSearch(artistName, trackName)
                                 track.postId = rootPost.id
-                                
+
                                 // make the reply
                                 await this._broadcaster.makeReply(post, `Adding ${track.name} to the weekly playlist\n[![](${track.img})](${playlist.getLink()})`)
                                 console.log('Posted a reply')
@@ -268,6 +267,6 @@ export class Bot {
             console.log('done with all posts')
         } catch(e) {
             console.log('something went wrong', e)
-        } 
+        }
     }
 }
