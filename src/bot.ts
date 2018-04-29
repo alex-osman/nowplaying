@@ -1,6 +1,6 @@
 import { reportStartWeek, reportRecap } from './reporter';
 import { Broadcaster } from './broadcaster/broadcaster';
-import { Database } from './database/database'
+import { IDatabase } from './database/database'
 import { BlockchainAPI } from './blockchainAPI/blockchainAPI'
 import { User } from './classes/user';
 import { weekFilter } from './filters';
@@ -23,7 +23,7 @@ export class Bot {
 
     private _broadcaster: Broadcaster;
     private _blockchainAPI: BlockchainAPI;
-    private _database: Database;
+    private _database: IDatabase;
 
 
     getPostingWif(): string {
@@ -43,7 +43,7 @@ export class Bot {
         this._blockchainAPI = blockchainAPI
     }
 
-    async setDatabase(database: Database): Promise<void> {
+    async setDatabase(database: IDatabase): Promise<void> {
         this._database = database
         await this._database.setup()
         this.users = await this._database.getUsers()

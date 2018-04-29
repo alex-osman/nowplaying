@@ -93,7 +93,7 @@ export const leaderboard = (report: Report): Report => {
 
 export const initializeReport = (users: User[], postWeek = false): Report => {
     const report = new Report()
-    report.reportOptions.week = settings.week()
+    report.reportOptions.week = settings.week() - 1
     report.reportOptions.startWeek = new Date(2018, 0, (report.reportOptions.week - 1) * 7)
     report.reportOptions.endWeek = new Date(2018, 0, (report.reportOptions.week) * 7 - 1)
     report.reportOptions.payout = settings.payout
