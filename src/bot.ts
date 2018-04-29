@@ -228,7 +228,7 @@ export class Bot {
                 if (questionReply && questionReply.children) {
                     // Read the replies
                     replies = await this._blockchainAPI.getReplies(questionReply as Post)
-                    const authorReplies = replies.filter((post: Post) => post.author === rootPost.author)
+                    const authorReplies = replies.filter((post: Post) => post.author === rootPost.author || post.author === this.username || post.author === 'walnut1')
                     for (const post of authorReplies) {
                         try {
                             // Check if we already commented on this one
