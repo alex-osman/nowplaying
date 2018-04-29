@@ -93,6 +93,7 @@ export class Spotify {
             } else {
                 console.warn('didnt go well', e)
             }
+            return false
         }
     }
 
@@ -174,7 +175,7 @@ export class Spotify {
 
             return playlists
         } catch(e) {
-            console.log('getplaylists error', e)
+            console.log('getplaylists error')
         }
     }
 
