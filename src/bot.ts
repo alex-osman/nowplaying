@@ -55,7 +55,7 @@ export class Bot {
 
     async scrape(): Promise<any> {
         console.log(`[${dateformat(new Date(), 'mmmm dS, h:MM:ss TT')}]`)
-        console.log(`[Start Scraping]`)
+        console.log(`[Start Scraping - Week ${this.week}]`)
         try {
             const allPosts = await this._blockchainAPI.getPosts(this.communityName)
             const results = await this._database.writePosts(allPosts)

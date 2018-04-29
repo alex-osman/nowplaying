@@ -4,7 +4,7 @@ import { Bot } from '../bot';
 
 const main = async () => {
     const bot: Bot = await init()
-    bot.scrape()
+    await bot.scrape()
     bot.close()
 }
 

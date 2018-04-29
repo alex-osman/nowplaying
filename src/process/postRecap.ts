@@ -7,6 +7,7 @@ const main = async () => {
     const report = await bot.postRecap()
     // console.log(report)
     ncp.copy(report.post.body, () => console.log('Copied to clipboard'))
+    bot.close()
 }
 
 main()
