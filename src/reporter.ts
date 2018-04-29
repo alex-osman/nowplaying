@@ -75,13 +75,13 @@ export const spotify = (report: Report): Report => {
 }
 
 export const payout = (report: Report): Report => {
-    const users = report.users.filter(weekFilter(settings.week - 1))
+    const users = report.users.filter(weekFilter(settings.week() - 1))
     report.post.body = `${report.post.body}\n${center(`Week ${report.reportOptions.week} Contestants`)}\n${center(`We had a total payout of about ${report.reportOptions.payout} STEEM, which will be powered up to all ${users.length} contestants.  That's about ${parseInt(String(report.reportOptions.payout / users.length * 1000)) / 1000} SP per person!`)}`
     return report
 }
 
 export const contestants = (report: Report): Report => {
-    const users = report.users.filter(weekFilter(settings.week - 1))
+    const users = report.users.filter(weekFilter(settings.week() - 1))
     report.post.body = `${report.post.body}\n${center(`${users.reduce((str, user, index) => `${str}[${user.username}](steemit.com/nowplaying/@${user.username}/${user.posts[user.posts.length - 1].permlink})${index === users.length-1 ? '!' : ', '}`, '')}`)}`
     return report
 }
@@ -93,7 +93,7 @@ export const leaderboard = (report: Report): Report => {
 
 export const initializeReport = (users: User[], postWeek = false): Report => {
     const report = new Report()
-    report.reportOptions.week = settings.week
+    report.reportOptions.week = settings.week()
     report.reportOptions.startWeek = new Date(2018, 0, (report.reportOptions.week - 1) * 7)
     report.reportOptions.endWeek = new Date(2018, 0, (report.reportOptions.week) * 7 - 1)
     report.reportOptions.payout = settings.payout

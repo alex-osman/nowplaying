@@ -34,7 +34,7 @@ export class Statistics {
     public general() {
         console.log('posts: ', this._posts.length)
         console.log('users: ', this._users.length)
-        const weeks = [...Array(settings.week + 1).keys()]
+        const weeks = [...Array(settings.week() + 1).keys()]
             .map(weekNum => ({ weekNum, posts: this._posts.filter(postWeekFilter(weekNum))}))
             .map(week => ({ length: week.posts.length, posts: week.posts, weekNum: week.weekNum }))
             .map(week => ({

@@ -15,7 +15,7 @@ const main = async () => {
   const TIME = 1000 * 60 * 30
   const bot = new Bot()
   bot.communityName = settings.communityName
-  bot.week = settings.week
+  bot.week = settings.week()
   bot.username = settings.username
   bot.password = settings.password
   bot.setBroadcaster(new SteemBroadcaster())

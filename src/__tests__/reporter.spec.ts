@@ -27,7 +27,7 @@ describe('Reporter Post Body', () => {
         const report = initializeReport(users, true)
         
         expect(report).toBeTruthy()
-        expect(settings.week).toBe(10)
+        expect(settings.week()).toBe(10)
         expect(report.post.title).toBe(`Now Playing: Week 9 (Feb 25 - Mar 3)`)
     })
     
@@ -35,7 +35,7 @@ describe('Reporter Post Body', () => {
         const report = initializeReport(users)
         
         expect(report).toBeTruthy()
-        expect(settings.week).toBe(10)
+        expect(settings.week()).toBe(10)
         expect(report.post.title).toBe(`Spotify Playlist: Week 9 (Feb 25 - Mar 3)`)
     })
 
