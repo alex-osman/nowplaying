@@ -211,7 +211,11 @@ export class Bot {
     async replies() {
         try {
             const spotify = Spotify.Instance()
-            await spotify.authenticate()
+            const authenticated = await spotify.authenticate()
+            if (!authenticated) {
+                console.log('bad authentication')
+                return
+            }
 
             const playlists = await spotify.getPlaylists()
             const playlist = playlists.find(playlist => playlist.week === this.week)
@@ -266,6 +270,7 @@ export class Bot {
             }
             console.log('done with all posts')
         } catch(e) {
+            process.exit()
             console.log('something went wrong', e)
         }
     }
