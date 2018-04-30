@@ -33,7 +33,7 @@ export class Spotify {
         return this.spotify
     }
 
-    private refresh_authentication = async () => {
+    private refresh_authentication = async (callback) => {
         try {
             const response = JSON.parse(
                 await request.post({
@@ -49,15 +49,24 @@ export class Spotify {
                 })
             )
             this.access_token = response.access_token
-            return true
+            callback({
+                spotify_access: this.access_token,
+                spotify_refresh: this.refresh_token
+            })
         } catch(e) {
             console.warn('error refreshing', e)
             throw e
         }
     }
 
-    public authenticate = async () => {
-        const { SPOTIFY_AUTH, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = process.env
+    public authenticate = async (auth, callback) => {
+        console.log('authenticating...')
+        const { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = process.env
+        if (auth) {
+            this.access_token = auth.spotify_access;
+            this.refresh_token = auth.spotify_refresh;
+        }
+
         try {
             if (!this.refresh_token) {
                 const response = JSON.parse(
@@ -77,9 +86,14 @@ export class Spotify {
                 console.log('~authenticated~')
                 this.access_token = response.access_token;
                 this.refresh_token = response.refresh_token;
+            } else {
+                console.log('~~authenticated~~')
             }
-            setInterval(this.refresh_authentication, 3600 * 1000)
-            return true
+            setInterval(() => this.refresh_authentication(callback), 3600 * 1000)
+            callback({
+                spotify_access: this.access_token,
+                spotify_refresh: this.refresh_token,
+            })
         } catch(e) {
             if (e.error) {
                 const error = JSON.parse(e.error)
@@ -93,7 +107,7 @@ export class Spotify {
             } else {
                 console.warn('didnt go well', e)
             }
-            return false
+            return null
         }
     }
 
@@ -149,7 +163,6 @@ export class Spotify {
 
     public getPlaylists = async () => {
         try {
-            console.log('access:', this.access_token)
             const response = JSON.parse(
                 await request({
                     url: this._urls.playlists(this._user),
@@ -159,7 +172,6 @@ export class Spotify {
                         'Authorization': `Bearer ${this.access_token}`,
                     }
                 }))
-            console.log('got playlists response')
             const playlistPromises = response.items
                 .filter(item => item.name.includes('#nowplaying'))
                 .map(item => Object.assign({}, item, { week: parseInt(item.name.split('#nowplaying')[1]) }))

@@ -25,15 +25,15 @@ describe('Reporter Functions', () => {
 describe('Reporter Post Body', () => {
     it('initializes a postweek report', () => {
         const report = initializeReport(users, true)
-        
+
         expect(report).toBeTruthy()
         expect(settings.week()).toBe(10)
         expect(report.post.title).toBe(`Now Playing: Week 9 (Feb 25 - Mar 3)`)
     })
-    
+
     it('initializes a recap report', () => {
         const report = initializeReport(users)
-        
+
         expect(report).toBeTruthy()
         expect(settings.week()).toBe(10)
         expect(report.post.title).toBe(`Spotify Playlist: Week 9 (Feb 25 - Mar 3)`)
@@ -44,12 +44,12 @@ describe('Reporter Post Body', () => {
         leaderboard(report)
         expect(report.post.body).toBe(`
 ## <center>Leaderboards</center>
-Rank | User | Weeks | Votes
+Rank | User | Weeks | Votes (per post)
 -|-|-|-
 1 | @user1 | 1 | 15`
         )
     })
-    
+
     it('runs contestants correctly', () => {
         const report = initializeReport(users)
         contestants(report)
@@ -63,7 +63,7 @@ Rank | User | Weeks | Votes
         payout(report)
         expect(report.post.body).toBe(`
 <center>Week 9 Contestants</center>
-<center>We had a total payout of about ${settings.payout} STEEM, which will be powered up to all 1 contestants.  That's about 0.4 SP per person!</center>`)
+<center>We had a total payout of about ${settings.payout} STEEM, which will be powered up to all 1 contestants.  That's about ${settings.payout} SP per person!</center>`)
     })
 
     it('runs spotify correctly', () => {

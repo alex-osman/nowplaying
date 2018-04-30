@@ -20,8 +20,28 @@ export class sqlDatabase {
         return this._con.end()
     }
 
-    async getUsers(): Promise < User[] > {
-        const users: Array < any > = await this._con.query('SELECT * FROM posts WHERE is_approved=1');
+    async getSpotifyAuth(): Promise<Object> {
+        const result = await this._con.query('SELECT * FROM settings')
+        return {
+            spotify_auth: result[0].spotify_auth,
+            spotify_refresh: result[0].spotify_refresh,
+            spotify_access: result[0].spotify_access
+        }
+    }
+
+    writeSpotifyAuth = async (auth: { spotify_access: String, spotify_refresh: String }): Promise<void> => {
+        try {
+            const result = await this._con.query('UPDATE settings SET ?', [auth]);
+            return result;
+        } catch (e) {
+            console.log(e, 'error writing spotify auth');
+            return;
+        }
+    }
+
+
+    async getUsers(): Promise <User[]> {
+        const users: Array <any> = await this._con.query('SELECT * FROM posts WHERE is_approved=1');
         return users
             .map(data => ({
                 author: data.author,
@@ -91,7 +111,7 @@ export class sqlDatabase {
             post: postObj.post,
             result: await this._con.query('UPDATE posts SET votes=?, children=? WHERE author=? AND permlink=?', [postObj.post.votes, postObj.post.children, postObj.post.author, postObj.post.permlink])
         })))
-        
+
         return {
             created: insertResponses.length - toUpdate.length,
             updated: updateResponses.filter(res => res.result.changedRows).length,
@@ -113,7 +133,7 @@ export class sqlDatabase {
         // console.log(result)
         return result
     }
-    
+
     async writeVote(post: Post): Promise<any> {
         const result = await this._con.query('UPDATE posts SET did_vote=1 WHERE author=? AND permlink=?', [post.author, post.permlink])
         // console.log(result)

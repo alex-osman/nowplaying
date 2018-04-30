@@ -31,14 +31,14 @@ export class Statistics {
     }
 
     public general() {
-        console.log('posts: ', this._posts.length)
-        console.log('users: ', this._users.length)
+        console.log('posts: ', this._posts.length);
+        console.log('users: ', this._users.length);
         const weeks = [...Array(settings.week() + 1).keys()]
             .map((weekNum: Number) => ({ weekNum, posts: this._posts.filter(postWeekFilter(weekNum))}))
             .map(week => ({ length: week.posts.length, posts: week.posts, weekNum: week.weekNum }))
             .map(week => ({
                 ...week,
-                votes: week.posts.map(p => p.votes).reduce((p, c) => p + c, 0),
+                votes: week.posts.map((post: Post) => p.votes).reduce((p, c) => p + c, 0),
                 authors: week.posts
                     .map((post: Post) => post.author)
                     .filter((author: String, index: Number, authors: String[]) => authors.indexOf(author) === index),

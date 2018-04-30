@@ -7,7 +7,9 @@ export interface IDatabase {
     close: () => Promise<void>;
     getUsers: () => Promise<User[]>;
     getPosts: () => Promise<Post[]>;
-    
+    getSpotifyAuth: () => Promise<String>;
+
+    writeSpotifyAuth: (auth: { spotify_access: String, spotify_refresh: String }) => Promise<String>;
     approve: (post: Post[]) => Promise<any>;
     writePosts: (posts: Post[]) => Promise<{ created: number, updated: number, total: number }>;
     writeComment: (post: Post) => Promise<any>;
