@@ -7,7 +7,7 @@
 #
 # Host: 216.15.29.240 (MySQL 5.7.18-0ubuntu0.17.04.1)
 # Database: nowplaying
-# Generation Time: 2018-03-30 15:27:15 +0000
+# Generation Time: 2018-04-30 16:18:35 +0000
 # ************************************************************
 
 
@@ -22,8 +22,6 @@
 
 # Dump of table posts
 # ------------------------------------------------------------
-
-USE nowplaying;
 
 CREATE TABLE `posts` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -41,6 +39,18 @@ CREATE TABLE `posts` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `author` (`author`,`permlink`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table settings
+# ------------------------------------------------------------
+
+CREATE TABLE `settings` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `spotify_refresh` varchar(512) DEFAULT NULL,
+  `spotify_access` varchar(512) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
 
