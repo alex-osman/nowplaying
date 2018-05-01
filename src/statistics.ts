@@ -38,7 +38,7 @@ export class Statistics {
             .map(week => ({ length: week.posts.length, posts: week.posts, weekNum: week.weekNum }))
             .map(week => ({
                 ...week,
-                votes: week.posts.map((post: Post) => p.votes).reduce((p, c) => p + c, 0),
+                votes: week.posts.map((post: Post) => post.votes).reduce((p, c) => p + c, 0),
                 authors: week.posts
                     .map((post: Post) => post.author)
                     .filter((author: String, index: Number, authors: String[]) => authors.indexOf(author) === index),
