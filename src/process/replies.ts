@@ -3,7 +3,8 @@ import { Bot } from '../bot';
 
 const main = async () => {
     const bot: Bot = await init()
-    bot.replies()
+    await bot.replies()
+    bot.close()
 }
 
 main()
