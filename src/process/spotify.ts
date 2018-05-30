@@ -188,6 +188,7 @@ export class Spotify {
             return playlists
         } catch(e) {
             console.log('getplaylists error')
+            console.log(e)
         }
     }
 
