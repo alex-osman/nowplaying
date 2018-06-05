@@ -15,4 +15,5 @@ export interface IDatabase {
     writeComment: (post: Post) => Promise<any>;
     writeVote: (post: Post) => Promise<any>;
     writeTrack: (track: Track) => Promise<any>;
+    stopReadReplies: (post: Post) => Promise<any>;
 }

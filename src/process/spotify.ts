@@ -69,6 +69,7 @@ export class Spotify {
 
         try {
             if (!this.refresh_token) {
+                console.log('no refresh', process.env.SPOTIFY_AUTH, process.env.SPOTIFY_CLIENT_ID, process.env.SPOTIFY_CLIENT_SECRET)
                 const response = JSON.parse(
                     await request.post({
                         url: this._urls.auth(),
@@ -83,11 +84,14 @@ export class Spotify {
                         client_secret: process.env.SPOTIFY_CLIENT_SECRET,
                     })
                 )
-                console.log('~authenticated~')
+                console.log(response)
                 this.access_token = response.access_token;
                 this.refresh_token = response.refresh_token;
+                const playlists = await this.getPlaylists()
+                console.log('~authenticated~', playlists)
             } else {
-                console.log('~~authenticated~~')
+                const playlists = await this.getPlaylists()
+                console.log('~~authenticated~~', playlists)
             }
             setInterval(() => this.refresh_authentication(callback), 3600 * 1000)
             callback({
@@ -100,7 +104,7 @@ export class Spotify {
                 if (error.error_description === 'Authorization code expired') {
                     console.warn('Authorization __ code __ expired doofus')
                 } else if (error.error_description === 'Invalid access token') {
-                    console.warn('Invalid Access cokde', error)
+                    console.warn('Invalid Access code', error)
                 } else {
                     console.warn(error.error_description)
                 }

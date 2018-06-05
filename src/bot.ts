@@ -59,10 +59,10 @@ export class Bot {
             const allPosts = await this._blockchainAPI.getPosts(this.communityName);
             const results = await this._database.writePosts(allPosts);
             console.log(`- created: ${results.created}\n- updated: ${results.updated}`);
-            await this.approve();
-            await this.comment();
-            await this.vote();
-            await this.replies();
+            try { await this.approve(); } catch (e) { }
+            try { await this.comment(); } catch (e) { }
+            try { await this.vote(); } catch (e) { }
+            try { await this.replies(); } catch (e) { }
 
         } catch (e) {
             console.log(e);
@@ -298,6 +298,7 @@ export class Bot {
 
                             }
                         } catch (e) {
+                            console.log('PROBABLY ERROR SEARCHING FOR...')
                             // whatever
                         }
                     }

@@ -24,6 +24,5 @@ export const init = async () => {
   bot.setBlockchainAPI(new SteemAPI())
   await bot.setDatabase(new sqlDatabase(local))
   await bot.authenticate()
-
   return bot
 }

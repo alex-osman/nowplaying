@@ -17,6 +17,7 @@ export class sqlDatabase {
         this._con = await mysql.createConnection(this._options)
     }
     async close() {
+        console.log('Closing database connection')
         return this._con.end()
     }
 
@@ -136,12 +137,17 @@ export class sqlDatabase {
 
     async writeVote(post: Post): Promise<any> {
         const result = await this._con.query('UPDATE posts SET did_vote=1 WHERE author=? AND permlink=?', [post.author, post.permlink])
-        // console.log(result)
         return result
     }
 
     async writeTrack(track: Track): Promise<any> {
         const result = await this._con.query('INSERT INTO tracks SET ?', [track])
+        return result
+    }
+
+    async stopReadReplies(post: Post): Promise<any> {
+        const result = await this._con.query('UPDATE posts SET read_replies=1 WHERE author=? AND permlink=?', [post.author, post.permlink])
+        // console.log(result)
         return result
     }
 }
