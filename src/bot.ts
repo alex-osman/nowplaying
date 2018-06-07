@@ -49,7 +49,7 @@ export class Bot {
     }
 
     public async close(): Promise<void> {
-        await this._database.close();
+        // await this._database.close();
     }
 
     public async scrape(): Promise<void> {
@@ -95,16 +95,15 @@ export class Bot {
             console.log('- commenting on', toCommentPosts)
 
             // Comment on each one with 20 second breaks
-            toCommentPosts.forEach((post, index) => {
-                setTimeout(async () => {
-                    try {
-                        await this._broadcaster.makeComment(post);
-                        await this._database.writeComment(post);
-                    } catch(e) {
-                        console.log('err commenting', e);
-                    }
-                }, index * 22 * 1000)
-            })
+            for (const [index, post] of toCommentPosts.entries()) {
+                try {
+                    await this._broadcaster.makeComment(post);
+                    await this._database.writeComment(post);
+                } catch(e) {
+                    console.log('err commenting', e);
+                }
+                await new Promise(resolve => setTimeout(resolve, 22 * 1000))
+            }
         } catch(e) {
             console.log('something went wrong', e);
         }
@@ -138,10 +137,11 @@ export class Bot {
     public async payout(totalPayout: number): Promise<void> {
         const allUsers = await this._database.getUsers()
         const weekUsers = allUsers.filter(weekFilter(this.week));
+        console.log(this.week)
         console.log(weekUsers.map(u => u.username));
         const wallet = await this._blockchainAPI.getWallet({ username: this.username } as User);
         wallet.setActive(this.getActiveWif());
-        wallet.setDanger(true);
+        // wallet.setDanger(true);
 
         // Payout each user
         const individualPayout = totalPayout / weekUsers.length
@@ -275,8 +275,8 @@ export class Bot {
                             // if not, parse the comment and reply
                             if (!subreplies.find((reply: Post) => reply.author === this.username)) {
                                 // Parse the comment
-                                const artistName = post.body.split('\n')[0].trim()
-                                const trackName = post.body.split('\n')[1].trim()
+                                const artistName = post.body.split('\n')[0].trim().replace(/[Aa]rtist\:*\s*/, '')
+                                const trackName = post.body.split('\n')[1].trim().replace(/[Ss]ong\:*\s*/, '').replace(/[Tt]rack\:*\s*/, '')
                                 console.log(artistName)
                                 console.log(trackName)
                                 // search the track
@@ -297,11 +297,14 @@ export class Bot {
                                 console.log('added ', track.name)
 
                             }
-                        } catch (e) {
-                            console.log('PROBABLY ERROR SEARCHING FOR...')
-                            // whatever
-                        }
+                        } catch (e) { }
                     }
+                }
+
+                // No longer look at this one if older than a week
+                const now = new Date().getTime()
+                if (new Date(rootPost.created).getTime() + (1000 * 60 * 60 * 24 * 7) < now) {
+                    await this._database.stopReadReplies(rootPost)
                 }
             }
         } catch(e) {

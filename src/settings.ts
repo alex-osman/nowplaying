@@ -5,7 +5,7 @@ export const settings = {
     username: process.env.STEEM_USERNAME,
     password: process.env.STEEM_PASSWORD,
     week: () => isTest ? 10 : Math.ceil(((((new Date() as any) - (new Date(2018, 0, 1) as any)) / 86400000) ) / 7),
-    payout: 0.99,
+    payout: .814,
     tags: ['nowplaying', 'music', 'contest', 'share', 'spotify'],
     blacklist: [
         'arsaljr',

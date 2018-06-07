@@ -146,8 +146,8 @@ export class sqlDatabase {
     }
 
     async stopReadReplies(post: Post): Promise<any> {
-        const result = await this._con.query('UPDATE posts SET read_replies=1 WHERE author=? AND permlink=?', [post.author, post.permlink])
-        // console.log(result)
+        const result = await this._con.query('UPDATE posts SET read_replies=0 WHERE author=? AND permlink=?', [post.author, post.permlink])
+        console.log(result)
         return result
     }
 }

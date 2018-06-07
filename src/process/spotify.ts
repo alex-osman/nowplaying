@@ -88,12 +88,13 @@ export class Spotify {
                 this.access_token = response.access_token;
                 this.refresh_token = response.refresh_token;
                 const playlists = await this.getPlaylists()
-                console.log('~authenticated~', playlists)
+                console.log('~authenticated~')
             } else {
                 const playlists = await this.getPlaylists()
-                console.log('~~authenticated~~', playlists)
+                console.log('~~authenticated~~')
             }
             setInterval(() => this.refresh_authentication(callback), 3600 * 1000)
+            this.refresh_authentication(callback)
             callback({
                 spotify_access: this.access_token,
                 spotify_refresh: this.refresh_token,
