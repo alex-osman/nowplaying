@@ -8,6 +8,7 @@ import { Statistics } from './statistics';
 import { Post } from './classes/post';
 import { Report } from './classes/report';
 import { Spotify } from './process/spotify';
+import { Track } from './classes/track';
 const dateformat = require('dateformat')
 
 const steem = require('steem')
@@ -296,6 +297,8 @@ export class Bot {
                                 await spotify.addTrack(playlist, track)
                                 console.log('added ', track.name)
 
+                                await this.sameTrack()
+                                
                             }
                         } catch (e) { }
                     }
@@ -311,5 +314,15 @@ export class Bot {
             process.exit()
             console.log('something went wrong', e)
         }
+    }
+
+    /**
+     * This function will look through the database for other posts with a similar track or artist
+     * If something is found we will post a link to that new post
+     * 
+     * @param track A track to look for friends
+     */
+    async sameTrack(track: Track) {
+
     }
 }
