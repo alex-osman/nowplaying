@@ -61,7 +61,6 @@ export class Spotify {
 
     public authenticate = async (auth, callback) => {
         console.log('authenticating...')
-        const { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = process.env
         if (auth) {
             this.access_token = auth.spotify_access;
             this.refresh_token = auth.spotify_refresh;

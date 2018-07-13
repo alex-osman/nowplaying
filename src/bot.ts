@@ -319,9 +319,11 @@ export class Bot {
         const spotify = Spotify.Instance()
 
         // Check if this track has been seen before
-        await this._database.getPostsByTrack(track)
-
-        await this._broadcaster.makeReply(post, `Adding ${track.name} to the weekly playlist\n[![](${track.img})](${playlist.getLink()})`)
+        const posts = await this._database.getPostsByTrack(track)
+        const text = posts.map(post => `@${post.author} posted this song on [${dateformat(post.created, 'mmmm dS')}](${post.getLink()})!`)
+        const replyText = `Adding ${track.name} to the weekly playlist\n[![](${track.img})](${playlist.getLink()})\n${text.join('\n')}`
+        
+        await this._broadcaster.makeReply(post, replyText)
         console.log('Posted a reply')
         await (() => new Promise(resolve => setTimeout(resolve, 20000)))()
 
@@ -332,10 +334,5 @@ export class Bot {
         // add to the playlist
         await spotify.addTrack(playlist, track)
         console.log('added ', track.name)
-    }
-
-    async testMe() {
-        const x = await this._database.getPostsByTrack({ spotify_id: '62oCnK99vT8HOgwPsvXuiM' } as Track)
-        console.log(`${x[0].author} posted this song on ${dateformat(x[0].created, 'mmmm dS')}!`);
     }
 }

@@ -89,12 +89,14 @@ export class sqlDatabase {
 
     async getPostsByTrack(track: Track): Promise<Post[]> {
         const result: Array<any> = await this._con.query('SELECT * FROM tracks INNER JOIN posts on postId=posts.id where spotify_id=?', [track.spotify_id])
-        return result.map(d => ({
-            author: d.author,
-            permlink: d.permlink,
-            tag: d.tag,
-            created: d.created
-        }) as Post)
+        return result.map(d => {
+            const post = new Post();
+            post.author = d.author
+            post.permlink = d.permlink
+            post.tag = d.tag
+            post.created = d.created
+            return post;
+        })
     }
 
     async writePosts(posts: Post[]): Promise<any> {
