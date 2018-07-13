@@ -69,8 +69,8 @@ export class sqlDatabase {
             }, [])
     }
 
-    async getPosts(): Promise < Post[] > {
-        const posts: Array < any > = await this._con.query('SELECT * FROM posts');
+    async getPosts(): Promise <Post[]> {
+        const posts: Array <any> = await this._con.query('SELECT * FROM posts');
         return posts.map(d => ({
             id: d.id,
             author: d.author,
@@ -85,6 +85,16 @@ export class sqlDatabase {
             read_replies: d.read_replies
         }) as Post)
         .filter(post => !settings.blacklist.includes(post.author))
+    }
+
+    async getPostsByTrack(track: Track): Promise<Post[]> {
+        const result: Array<any> = await this._con.query('SELECT * FROM tracks INNER JOIN posts on postId=posts.id where spotify_id=?', [track.spotify_id])
+        return result.map(d => ({
+            author: d.author,
+            permlink: d.permlink,
+            tag: d.tag,
+            created: d.created
+        }) as Post)
     }
 
     async writePosts(posts: Post[]): Promise<any> {

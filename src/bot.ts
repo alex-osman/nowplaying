@@ -9,6 +9,7 @@ import { Post } from './classes/post';
 import { Report } from './classes/report';
 import { Spotify } from './process/spotify';
 import { Track } from './classes/track';
+import { Playlist } from './classes/playlist';
 const dateformat = require('dateformat')
 
 const steem = require('steem')
@@ -82,8 +83,6 @@ export class Bot {
         const toApprove = unapproved.filter((post: Post) => voters.includes(post.author));
         console.log('- approving', toApprove.map(post => `${post.author}, ${post.permlink}`));
         this._database.approve(toApprove);
-
-
     }
 
     public async comment(): Promise<void> {
@@ -259,50 +258,9 @@ export class Bot {
             const allPosts = (await this._database.getPosts())
                 .filter(post => post.read_replies)
 
-
+            // Check each post to see if we need to comment on any
             for (const rootPost of allPosts) {
-                let replies: Post[] = await this._blockchainAPI.getReplies(rootPost)
-
-                // Find our reply asking for songs
-                const questionReply = replies.find(reply => reply.author === this.username)
-                if (questionReply && questionReply.children) {
-                    // Read the replies
-                    replies = await this._blockchainAPI.getReplies(questionReply as Post)
-                    const authorReplies = replies.filter((post: Post) => post.author === rootPost.author || post.author === this.username || post.author === 'walnut1')
-                    for (const post of authorReplies) {
-                        try {
-                            // Check if we already commented on this one
-                            const subreplies = await this._blockchainAPI.getReplies(post)
-                            // if not, parse the comment and reply
-                            if (!subreplies.find((reply: Post) => reply.author === this.username)) {
-                                // Parse the comment
-                                const artistName = post.body.split('\n')[0].trim().replace(/[Aa]rtist\:*\s*/, '')
-                                const trackName = post.body.split('\n')[1].trim().replace(/[Ss]ong\:*\s*/, '').replace(/[Tt]rack\:*\s*/, '')
-                                console.log(artistName)
-                                console.log(trackName)
-                                // search the track
-                                const track = await spotify.trackSearch(artistName, trackName)
-                                track.postId = rootPost.id
-
-                                // make the reply
-                                await this._broadcaster.makeReply(post, `Adding ${track.name} to the weekly playlist\n[![](${track.img})](${playlist.getLink()})`)
-                                console.log('Posted a reply')
-                                await (() => new Promise(resolve => setTimeout(resolve, 20000)))()
-
-                                // add to the database
-                                await this._database.writeTrack(track)
-                                console.log('wrote to database')
-
-                                // add to the playlist
-                                await spotify.addTrack(playlist, track)
-                                console.log('added ', track.name)
-
-                                await this.sameTrack()
-                                
-                            }
-                        } catch (e) { }
-                    }
-                }
+                await this.replyTo(rootPost, playlist)
 
                 // No longer look at this one if older than a week
                 const now = new Date().getTime()
@@ -316,13 +274,68 @@ export class Bot {
         }
     }
 
-    /**
-     * This function will look through the database for other posts with a similar track or artist
-     * If something is found we will post a link to that new post
-     * 
-     * @param track A track to look for friends
-     */
-    async sameTrack(track: Track) {
+    async replyTo(rootPost: Post, playlist: Playlist) {
+        let replies: Post[] = await this._blockchainAPI.getReplies(rootPost)
+        const spotify = Spotify.Instance()
 
+        // Find our reply asking for songs
+        const questionReply = replies.find(reply => reply.author === this.username)
+        if (questionReply && questionReply.children) {
+            // Read the replies
+            replies = await this._blockchainAPI.getReplies(questionReply as Post)
+            const authorReplies = replies.filter((post: Post) => post.author === rootPost.author || post.author === this.username || post.author === 'walnut1')
+            for (const post of authorReplies) {
+                try {
+                    // Check if we already commented on this one
+                    const subreplies = await this._blockchainAPI.getReplies(post)
+                    // if not, parse the comment and reply
+                    if (!subreplies.find((reply: Post) => reply.author === this.username)) {
+                        // Parse the comment
+                        const artistName = post.body.split('\n')[0].trim().replace(/[Aa]rtist\:*\s*/, '')
+                        const trackName = post.body.split('\n')[1].trim().replace(/[Ss]ong\:*\s*/, '').replace(/[Tt]rack\:*\s*/, '')
+                        console.log(artistName)
+                        console.log(trackName)
+                        // search the track
+                        const track = await spotify.trackSearch(artistName, trackName)
+                        track.postId = rootPost.id
+
+                        // make the reply
+                        await this.addTrackReply(post, track, playlist)
+                    }
+                } catch (e) { }
+            }
+        }
+    }
+
+    /**
+     * This function will add a track to the database and
+     * reply to the user's post
+     * 
+     * @param post The post to reply to
+     * @param track The track being added
+     * @param playlist The playlist to add to
+     */
+    async addTrackReply(post: Post, track: Track, playlist: Playlist) {
+        const spotify = Spotify.Instance()
+
+        // Check if this track has been seen before
+        await this._database.getPostsByTrack(track)
+
+        await this._broadcaster.makeReply(post, `Adding ${track.name} to the weekly playlist\n[![](${track.img})](${playlist.getLink()})`)
+        console.log('Posted a reply')
+        await (() => new Promise(resolve => setTimeout(resolve, 20000)))()
+
+        // add to the database
+        await this._database.writeTrack(track)
+        console.log('wrote to database')
+
+        // add to the playlist
+        await spotify.addTrack(playlist, track)
+        console.log('added ', track.name)
+    }
+
+    async testMe() {
+        const x = await this._database.getPostsByTrack({ spotify_id: '62oCnK99vT8HOgwPsvXuiM' } as Track)
+        console.log(`${x[0].author} posted this song on ${dateformat(x[0].created, 'mmmm dS')}!`);
     }
 }
