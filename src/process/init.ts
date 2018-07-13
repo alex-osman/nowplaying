@@ -8,7 +8,7 @@ import { settings } from '../settings';
 import { Spotify } from './spotify';
 
 const local = {
-  host: '127.0.0.1',
+  host: process.env.DB_HOST || '127.0.0.1',
   user: process.env.DB_USER,
   password: '',
   database: settings.communityName
