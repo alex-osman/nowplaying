@@ -5,7 +5,6 @@ import { SteemBroadcaster } from '../broadcaster/steemBroadcaster';
 import { sqlDatabase } from '../database/sqlDatabase';
 import { SteemAPI } from '../blockchainAPI/steemAPI';
 import { settings } from '../settings';
-import { Spotify } from './spotify';
 
 const local = {
   host: process.env.DB_HOST || '127.0.0.1',
@@ -23,6 +22,11 @@ export const init = async () => {
   bot.setBroadcaster(new SteemBroadcaster())
   bot.setBlockchainAPI(new SteemAPI())
   await bot.setDatabase(new sqlDatabase(local))
-  await bot.authenticate()
+
+  // Dont authenticate in testing environment
+  if (!process.env.NOWPLAYING_TESTING) {
+    await bot.authenticate()
+  }
+
   return bot
 }
