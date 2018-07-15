@@ -10,7 +10,7 @@ import { Spotify } from './spotify';
 const local = {
   host: process.env.DB_HOST || '127.0.0.1',
   user: process.env.DB_USER,
-  password: '',
+  password: process.env.DB_PASS,
   database: settings.communityName
 };
 
