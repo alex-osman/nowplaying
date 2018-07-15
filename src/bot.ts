@@ -321,7 +321,8 @@ export class Bot {
         // Check if this track has been seen before
         const posts = await this._database.getPostsByTrack(track)
         const text = posts.map(post => `@${post.author} posted this song on [${dateformat(post.created, 'mmmm dS')}](${post.getLink()})!`)
-        const replyText = `Adding ${track.name} to the weekly playlist\n[![](${track.img})](${playlist.getLink()})\n${text.join('\n')}`
+        text.push(`Adding ${track.name} to the weekly playlist\n[![](${track.img})](${playlist.getLink()})`);
+        const replyText = text.join('\n')
         
         await this._broadcaster.makeReply(post, replyText)
         console.log('Posted a reply')
