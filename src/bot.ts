@@ -51,7 +51,7 @@ export class Bot {
     }
 
     public async close(): Promise<void> {
-        // await this._database.close();
+        await this._database.close();
     }
 
     public async scrape(): Promise<void> {
