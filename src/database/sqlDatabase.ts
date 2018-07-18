@@ -17,6 +17,7 @@ export class sqlDatabase {
         this._con = await mysql.createConnection(this._options)
     }
     async close() {
+        console.log('Closing database connection')
         return this._con.end()
     }
 
@@ -68,8 +69,8 @@ export class sqlDatabase {
             }, [])
     }
 
-    async getPosts(): Promise < Post[] > {
-        const posts: Array < any > = await this._con.query('SELECT * FROM posts');
+    async getPosts(): Promise <Post[]> {
+        const posts: Array <any> = await this._con.query('SELECT * FROM posts');
         return posts.map(d => ({
             id: d.id,
             author: d.author,
@@ -84,6 +85,18 @@ export class sqlDatabase {
             read_replies: d.read_replies
         }) as Post)
         .filter(post => !settings.blacklist.includes(post.author))
+    }
+
+    async getPostsByTrack(track: Track): Promise<Post[]> {
+        const result: Array<any> = await this._con.query('SELECT * FROM tracks INNER JOIN posts on postId=posts.id where spotify_id=?', [track.spotify_id])
+        return result.map(d => {
+            const post = new Post();
+            post.author = d.author
+            post.permlink = d.permlink
+            post.tag = d.tag
+            post.created = d.created
+            return post;
+        })
     }
 
     async writePosts(posts: Post[]): Promise<any> {
@@ -136,12 +149,17 @@ export class sqlDatabase {
 
     async writeVote(post: Post): Promise<any> {
         const result = await this._con.query('UPDATE posts SET did_vote=1 WHERE author=? AND permlink=?', [post.author, post.permlink])
-        // console.log(result)
         return result
     }
 
     async writeTrack(track: Track): Promise<any> {
         const result = await this._con.query('INSERT INTO tracks SET ?', [track])
+        return result
+    }
+
+    async stopReadReplies(post: Post): Promise<any> {
+        const result = await this._con.query('UPDATE posts SET read_replies=0 WHERE author=? AND permlink=?', [post.author, post.permlink])
+        console.log(result)
         return result
     }
 }

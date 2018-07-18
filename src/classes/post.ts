@@ -26,4 +26,8 @@ export class Post {
     constructor() {
         this.jsonMetadata = {} as JsonMetadata
     }
+
+    public getLink() {
+        return `https://steemit.com/${this.tag}/@${this.author}/${this.permlink}`
+    }
 }

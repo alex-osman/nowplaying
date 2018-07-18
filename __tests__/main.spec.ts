@@ -3,11 +3,6 @@ import { init } from '../src/process/init';
 
 
 describe('TestExample0', () => {
-  // Act before assertions
-  beforeAll(async () => {
-    console.log('beforeAll')
-  });
-
   // Assert if setTimeout was called properly
   it('always passes', () => {
     expect(true).toBe(true);
