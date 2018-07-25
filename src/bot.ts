@@ -290,9 +290,17 @@ export class Bot {
                     const subreplies = await this._blockchainAPI.getReplies(post)
                     // if not, parse the comment and reply
                     if (!subreplies.find((reply: Post) => reply.author === this.username)) {
+                        // Strip any html
+                        const body = post.body.replace(/<[^>]*>/g, '')
+
                         // Parse the comment
-                        const artistName = post.body.split('\n')[0].trim().replace(/[Aa]rtist\:*\s*/, '')
-                        const trackName = post.body.split('\n')[1].trim().replace(/[Ss]ong\:*\s*/, '').replace(/[Tt]rack\:*\s*/, '')
+                        const artistName = body.split('\n')[0]
+                            .trim()
+                            .replace(/[Aa]rtist\:*\s*/, '')
+                        const trackName = body.split('\n')[1]
+                            .trim()
+                            .replace(/[Ss]ong\:*\s*/, '')
+                            .replace(/[Tt]rack\:*\s*/, '')
                         console.log(artistName)
                         console.log(trackName)
                         // search the track
