@@ -12,7 +12,7 @@ export class Spotify {
         auth: () => `https://accounts.spotify.com/api/token`,
         tracks: (userId, playlistId) => `https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks`,
         playlists: (userId, playlistId?: number) => `https://api.spotify.com/v1/users/${userId}/playlists/?limit=50`,
-        search: (track, artist) => `https://api.spotify.com/v1/search?q=${encodeURIComponent(track)}%20${encodeURIComponent(artist)}&type=track`,
+        search: (search) => `https://api.spotify.com/v1/search?q=${encodeURIComponent(search)}&type=track`,
         addTrack: (userId, playlistId, trackId) => `https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks?uris=${encodeURIComponent(`spotify:track:${trackId}`)}`
     }
     private _headers = {
@@ -196,11 +196,11 @@ export class Spotify {
         }
     }
 
-    public trackSearch = async (trackName: string, artistName: string) => {
+    public trackSearch = async (search: string) => {
         try {
             const response = JSON.parse(
                 await request({
-                    url: this._urls.search(trackName, artistName),
+                    url: this._urls.search(search),
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
@@ -217,10 +217,10 @@ export class Spotify {
                 track.img = song.album.images[0].url
                 return track
             } else {
-                throw { error: 'cant find', trackName, artistName }
+                throw { error: 'cant find', search }
             }
         } catch(e) {
-            console.warn('error searching for track', trackName, artistName, this._urls.search(trackName, artistName), e)
+            console.warn('error searching for track', search, this._urls.search(search), e)
             throw e
         }
     }

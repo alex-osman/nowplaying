@@ -291,20 +291,16 @@ export class Bot {
                     // if not, parse the comment and reply
                     if (!subreplies.find((reply: Post) => reply.author === this.username)) {
                         // Strip any html
-                        const body = post.body.replace(/<[^>]*>/g, '')
-
-                        // Parse the comment
-                        const artistName = body.split('\n')[0]
-                            .trim()
+                        const search = post.body
+                            .replace(/<[^>]*>/g, '')
                             .replace(/[Aa]rtist\:*\s*/, '')
-                        const trackName = body.split('\n')[1]
-                            .trim()
                             .replace(/[Ss]ong\:*\s*/, '')
                             .replace(/[Tt]rack\:*\s*/, '')
-                        console.log(artistName)
-                        console.log(trackName)
+                            .replace(/\s+/g, ' ')
+                        console.log(search)
+                        
                         // search the track
-                        const track = await spotify.trackSearch(artistName, trackName)
+                        const track = await spotify.trackSearch(search)
                         track.postId = rootPost.id
 
                         // make the reply
