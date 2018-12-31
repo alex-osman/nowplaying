@@ -102,7 +102,7 @@ export class Bot {
                 } catch(e) {
                     console.log('err commenting', e);
                 }
-                await new Promise(resolve => setTimeout(resolve, 22 * 1000))
+                await new Promise(resolve => setTimeout(resolve, 7 * 1000))
             }
         } catch(e) {
             console.log('something went wrong', e);
